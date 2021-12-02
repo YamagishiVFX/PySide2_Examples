@@ -19,7 +19,7 @@ pip install PySide2
 ```
 pip show PySide2
 ```
-## Darkstyle
+## Darkstyle:
 **QDarkstyle:** https://pypi.org/project/QDarkStyle/
 ```
 pip install QDarkStyle
