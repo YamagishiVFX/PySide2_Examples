@@ -29,10 +29,10 @@ import sys
 from PySide2 import QtCore, QtGui, QtWidgets
 
 if __name__ == '__main__':
-  app = QtWidgets.QApplication(sys.argv)
-  view = QtWidgets.QWidget()
-  view.show()
-  sys.exit(app.exec_())
+    app = QtWidgets.QApplication(sys.argv)
+    view = QtWidgets.QWidget()
+    view.show()
+    sys.exit(app.exec_())
 ```
 ### Example2:
 ```Python
@@ -59,10 +59,11 @@ from PySide2.QtWidgets import *
 import sys
 from PySide2.QtWidgets import QApplication, QDialog
 
-app = QApplication(sys.argv)
-w = QDialog()
-w.show()
-sys.exit(app.exec_())
+if __name__ == '__main__':
+    app = QApplication(sys.argv)
+    w = QDialog()
+    w.show()
+    sys.exit(app.exec_())
 ```
 
 ## Examples 
