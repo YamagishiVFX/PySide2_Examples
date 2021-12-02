@@ -53,18 +53,5 @@ from PySide2.QtCore import *
 from PySide2.QtGui import *
 from PySide2.QtWidgets import *
 ```
-
-## Test code
-```Python
-import sys
-from PySide2.QtWidgets import QApplication, QDialog
-
-if __name__ == '__main__':
-    app = QApplication(sys.argv)
-    w = QDialog()
-    w.show()
-    sys.exit(app.exec_())
-```
-
 ## Examples 
 * QDialog
