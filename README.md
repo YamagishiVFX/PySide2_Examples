@@ -4,6 +4,17 @@
 * Python 3.7.9
 * PySide2 (Qt 5.15.2)
 
+## Installation:
+```
+python -m pip install --upgrade pip
+pip install PySide2
+```
+
+**check PySide2**
+```
+pip show PySide2
+```
+
 ## Import PySide2:
 ### Example1:
 ```Python
