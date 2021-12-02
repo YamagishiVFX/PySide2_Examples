@@ -1,4 +1,4 @@
-# PySide2_Examples
+# PySide2 Examples
 ## Environment:
 * Window10
 * Python 3.7.9
