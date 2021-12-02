@@ -19,7 +19,7 @@ pip install PySide2
 ```
 pip show PySide2
 ```
-### Darkstyle
+## Darkstyle
 **QDarkstyle:** https://pypi.org/project/QDarkStyle/
 ```
 pip install QDarkStyle
@@ -57,5 +57,9 @@ from PySide2.QtCore import *
 from PySide2.QtGui import *
 from PySide2.QtWidgets import *
 ```
+
+## Qt.py
+https://github.com/mottosso/Qt.py
+
 ## Examples 
 * QDialog
