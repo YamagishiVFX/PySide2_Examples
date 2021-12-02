@@ -5,7 +5,7 @@
 * PySide2 (Qt 5.15.2)
 
 ## Installation:
-https://pypi.org/project/PySide2/
+**PySide2:** https://pypi.org/project/PySide2/
 ```
 python -m pip install --upgrade pip
 pip install PySide2
@@ -16,7 +16,7 @@ pip install PySide2
 pip show PySide2
 ```
 ### Darkstyle
-QDarkstyle: https://pypi.org/project/QDarkStyle/
+**QDarkstyle:** https://pypi.org/project/QDarkStyle/
 ```
 pip install QDarkStyle
 ```
