@@ -1,4 +1,5 @@
 # PySide2 Examples
+[VFXのためのPySideまとめ](https://yamagishi-2bit.blogspot.com/2021/09/pyside.html)
 ## Environment:
 * Window10
 * Python 3.7.9
