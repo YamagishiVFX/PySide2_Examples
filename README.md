@@ -5,7 +5,7 @@
 * PySide2 (Qt 5.15.2)
 
 ## Import PySide2:
-### Example1
+### Example1:
 ```Python
 import sys
 
@@ -17,7 +17,7 @@ if __name__ == '__main__':
   view.show()
   sys.exit(app.exec_())
 ```
-### Example2
+### Example2:
 ```Python
 from PySide2.QtCore import (
     Qt
@@ -30,7 +30,7 @@ from PySide2.QtWidgets import (
     QWidget
 )
 ```
-### Example3
+### Example3:
 ```Python
 from PySide2.QtCore import *
 from PySide2.QtGui import *
