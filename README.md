@@ -63,3 +63,4 @@ https://github.com/mottosso/Qt.py
 
 ## Examples 
 * QDialog
+* QMainWindow
