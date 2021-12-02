@@ -54,5 +54,16 @@ from PySide2.QtGui import *
 from PySide2.QtWidgets import *
 ```
 
+## Test code
+```Python
+import sys
+from PySide2.QtWidgets import QApplication, QDialog
+
+app = QApplication(sys.argv)
+w = QDialog()
+w.show()
+sys.exit(app.exec_())
+```
+
 ## Examples 
 * QDialog
