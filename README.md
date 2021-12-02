@@ -28,3 +28,4 @@ if __name__ == '__main__':
 ```
 
 ## QDialog
+* dialog_sample01.py Custumized iInput QDialog.
