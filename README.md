@@ -4,7 +4,7 @@
 * Python 3.7.9
 * PySide2 (Qt 5.15.2)
 
-## Import PySide2
+## Import PySide2:
 ```Python
 import sys
 
