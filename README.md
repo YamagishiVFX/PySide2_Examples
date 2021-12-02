@@ -27,5 +27,5 @@ if __name__ == '__main__':
   sys.exit(app.exec_())
 ```
 
-## QDialog
-* dialog_sample01.py Custumized iInput QDialog.
+## Examples 
+* QDialog
