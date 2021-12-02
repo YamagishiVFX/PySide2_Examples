@@ -1,5 +1,6 @@
 # PySide2 Examples
-[VFXのためのPySideまとめ](https://yamagishi-2bit.blogspot.com/2021/09/pyside.html)
+My Blog:[VFXのためのPySideまとめ](https://yamagishi-2bit.blogspot.com/2021/09/pyside.html) (Japanese only.)
+
 ## Environment:
 * Window10
 * Python 3.7.9
