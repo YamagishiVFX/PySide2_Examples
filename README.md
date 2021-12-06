@@ -34,7 +34,7 @@ from PySide2 import QtCore, QtGui, QtWidgets
 
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
-    view = QtWidgets.QWidget()
+    view = QtWidgets.Q()
     view.show()
     sys.exit(app.exec_())
 ```
