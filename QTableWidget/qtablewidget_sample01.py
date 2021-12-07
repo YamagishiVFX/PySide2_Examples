@@ -36,6 +36,20 @@ class View(QtWidgets.QWidget):
         layout = QtWidgets.QVBoxLayout(self)
         layout.addWidget(self.table)
 
+        #=================================#
+        # Signals
+        #=================================#
+        self.table.cellPressed.connect(self.cell_pressed_event)
+        self.table.itemPressed.connect(self.item_pressed_event)
+
+    def cell_pressed_event(self, row, column):
+        print(row, column)
+        item = self.table.item(row, column)
+        print(item.text())
+
+    def item_pressed_event(self, item):
+        print(item.text())
+
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
     view = View()
