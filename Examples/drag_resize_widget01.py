@@ -147,6 +147,7 @@ class View(QtWidgets.QWidget):
             pos = child.pos()
 
             print(f'{name} pos:{pos.x()} {pos.y()}')
+            print(child.geometry())
         
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
