@@ -14,7 +14,7 @@ logging.basicConfig(
     )
 logger = logging.getLogger(__name__)
 
-class FontCheckerQt(QtWidgets.QWidget):
+class FontPreviewQt(QtWidgets.QWidget):
     def __init__(self, logger, parent=None):
         super().__init__(parent)
 
@@ -114,8 +114,8 @@ class FontCheckerQt(QtWidgets.QWidget):
 
 class View(QtWidgets.QDialog):
     _name = 'QFont Preview'
-    _version = 'v1.0.2'
-    _updated = 'DEC 06 2021'
+    _version = 'v1.0.3'
+    _updated = 'DEC 07 2021'
     _created = 'DEC 04 2021'
     _client = 'Python 3.7.9 & PySide2'
     _coding_by = 'Tatsuya YAMAGISHI'
@@ -128,7 +128,7 @@ class View(QtWidgets.QDialog):
         self.setWindowTitle(f'{self._name} {self._version}')
 
         layout = QtWidgets.QVBoxLayout(self)
-        self.ui = FontCheckerQt(self.logger, self)
+        self.ui = FontPreviewQt(self.logger, self)
         layout.addWidget(self.ui)
 
         self.setup()
