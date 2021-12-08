@@ -5,8 +5,7 @@ from PySide2 import QtCore, QtGui, QtWidgets
 #===============================================================#
 # Reference from :
 # https://dungeonneko.hatenablog.com/entry/2017/06/19/180744
-# Python 3.7.9 
-# PySide 2
+# Python 3.7.9 & PySide 2
 #===============================================================#
 
 class Item(QtWidgets.QLabel):

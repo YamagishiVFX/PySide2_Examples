@@ -25,8 +25,7 @@ class MyWindow(QtWidgets.QMainWindow):
         #--------------------------------------#
         # Setup Status Bar
         #--------------------------------------#
-        self.statusbar = QtWidgets.QStatusBar(self)
-        self.setStatusBar(self.statusbar)
+        self.statusbar = self.statusBar()
 
         #--------------------------------------#
         # menuBar
@@ -43,5 +42,4 @@ if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
     view = MyWindow()
     view.show()
-    
     sys.exit(app.exec_())
