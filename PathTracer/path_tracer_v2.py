@@ -2,7 +2,13 @@
 # Reference From:
 # https://raytracing.xyz/
 # https://www.pythonguis.com/tutorials/bitmap-graphics/
+# 
+# Client : Python 3.7.9 & PySide2
+# Coding by Tatsuya Yamagishi
+# Updated : DEC 14 2021
+# Created : DEC 10 2021
 #=========================================================#
+
 import dataclasses
 import math
 import os
@@ -11,72 +17,85 @@ import sys
 import time
 
 from perlin_noise import PerlinNoise
-
 from PySide2 import QtCore, QtGui, QtWidgets
 
 @dataclasses.dataclass
 class Info:
     name: str = 'Y-Ray'
-    version: str = 'v2.0.0'
+    version: str = 'v2.1.0'
     width: int = 400
     height: int = 200
+    viewColor: QtGui.QColor = QtGui.QColor('Blue')
+    refresh: int = 200
 
-    @staticmethod
-    def NO_HIT():
-        return float('inf')
+    _NO_HIT: float = float('inf')
+    _EPSILON: float = 0.001
+    _DEPTH_MAX: int = 10
+    _VACUUM_REFRACTIVE_INDEX: float = 1.0
+    _SAMPLES: int = 100
+    _DISPLAY_GAMMA: float = 2.2
 
-    @staticmethod
-    def EPSILON():
-        return 0.001
+    @classmethod
+    def NO_HIT(cls):
+        return cls._NO_HIT
 
-    @staticmethod
-    def DEPTH_MAX():
-        return 10
+    @classmethod
+    def EPSILON(cls):
+        return cls._EPSILON
 
-    @staticmethod
-    def VACUUM_REFRACTIVE_INDEX():
-        return 1.0
+    @classmethod
+    def DEPTH_MAX(cls):
+        return cls._DEPTH_MAX
 
-    @staticmethod
-    def SAMPLES():
-        return 100
+    @classmethod
+    def VACUUM_REFRACTIVE_INDEX(cls):
+        return cls._VACUUM_REFRACTIVE_INDEX
 
-    @staticmethod
-    def DISPLAY_GAMMA():
-        return 2.2
+    @classmethod
+    def SAMPLES(cls):
+        return cls._SAMPLES
 
+    @classmethod
+    def DISPLAY_GAMMA(cls):
+        return cls._DISPLAY_GAMMA
+
+#=========================================================#
+# Class
+#=========================================================#
 @dataclasses.dataclass
 class Vec:
     x: float
     y: float
     z: float
-        
+
     def add(self, v):
         return Vec(self.x + v.x, self.y + v.y, self.z + v.z)
 
+    def add(self, v):
+        return Vec(self.x + v.x, self.y + v.y, self.z + v.z)
+    
     def sub(self, v):
         return Vec(self.x - v.x, self.y - v.y, self.z - v.z)
-
+    
     def scale(self, s):
         return Vec(self.x * s, self.y * s, self.z * s)
-
+    
     def neg(self):
         return Vec(-self.x, -self.y, -self.z)
-
+    
     def len(self):
         return math.sqrt(self.x * self.x + self.y * self.y + self.z * self.z)
-
+    
     def normalize(self):
         return self.scale(1.0 / self.len())
     
     def dot(self, v):
         return (self.x * v.x + self.y * v.y + self.z * v.z)
-
+    
     def cross(self, v):
         return Vec( self.y * v.z - v.y * self.z,
                     self.z * v.x - v.z * self.x,
-                    self.x * v.y - v.x * self.y
-        )
+                    self.x * v.y - v.x * self.y)
 
     def reflect(self, n):
         return self.sub(n.scale(2 * self.dot(n)))
@@ -84,36 +103,30 @@ class Vec:
     def refract(self, n, eta: float):
         dot = self.dot(n)
         d = 1.0 - (eta**2) * (1.0 - (dot**2))
-
+        
         if (0 < d):
             a = self.sub(n.scale(dot)).scale(eta)
             b = n.scale(math.sqrt(d))
             
             return a.sub(b)
         
-        return self.reflect(n) # 全反射
+        return self.reflect(n)
 
-    # 半球上のランダムな方向を選択する
     def randomHemisphere(self):
         dir = Vec(0.0, 0.0, 0.0)
 
-        # [1] 無限ループ、念のため100回で打ち切る
         for i in range(100):
-            #// [2] 立方体内部のランダムな点を決定する
             dir = Vec(
                 random.uniform(-1.0, 1.0),
                 random.uniform(-1.0, 1.0),
                 random.uniform(-1.0, 1.0)
             )
 
-            # [3] 半径1の球内部であればその点を採用しループを抜ける
             if (dir.len() < 1.0):
                 break
 
-        # [4] 正規化し、方向を求める
         dir = dir.normalize()
 
-        # [5] 法線方向の半球上に合わせる
         if dir.dot(self) < 0:
             dir = dir.neg()
 
@@ -154,15 +167,14 @@ class Spectrum:
     def COLOR_SKY():
         return Spectrum(0.7, 0.7, 0.7)
 
-
 @dataclasses.dataclass
 class Ray:
     origin: Vec
     dir: Vec
 
     def __init__(self, origin: Vec, dir: Vec):
+        self.origin = origin.add(dir.scale(Info.EPSILON()))
         self.dir = dir.normalize()
-        self.origin = origin.add(self.dir.scale(Info.EPSILON()))
 
 @dataclasses.dataclass
 class Material:
@@ -187,8 +199,34 @@ class Intersection:
     def hit(self):
         return self.t != Info.NO_HIT()
 
+# カメラ
+@dataclasses.dataclass
+class Camera:
+    eye: Vec = None
+    origin: Vec = None
+    xaxis: Vec = None
+    yaxis: Vec = None
+
+    def lookAt(self, eye: Vec, target: Vec, up: Vec,
+                fov: float, width:  int, height: int):
+        
+        self.eye = eye
+        imagePlane = (height / 2) / math.tan(fov / 2)
+        v = target.sub(eye).normalize()
+        self.xaxis = v.cross(up).normalize()
+        self.yaxis = v.cross(self.xaxis)
+        center = v.scale(imagePlane)
+        self.origin = center.sub(
+            self.xaxis.scale(0.5 * width)).sub(self.yaxis.scale(0.5 * height)
+        )
+
+    def ray(self, x: float, y: float):
+        p = self.origin.add(self.xaxis.scale(x)).add(self.yaxis.scale(y))
+        dir = p.normalize()
+        return Ray(self.eye, dir)
+
 class Intersectable:
-    def intersect(self, ray):
+    def intersect(self, ray: Ray):
         pass
 
 class Sphere(Intersectable):
@@ -255,7 +293,7 @@ class CheckedObj(Intersectable):
                     round(isect.p.y/self.gridWidth) +
                     round(isect.p.z/self.gridWidth)
             )
-
+            
             if (i % 2 == 0):
                 isect.material = self.material2
 
@@ -281,7 +319,6 @@ class TexturedObj(Intersectable):
             v = -isect.p.sub(self.origin).dot(self.vDir) / self.size
             v = math.floor((v - math.floor(v)) * self.image.height())
 
-            # 座標から色をピック
             c_obj = QtGui.QColor(self.image.pixel(int(u), int(v)))
             c = c_obj.getRgb()
 
@@ -293,55 +330,111 @@ class TexturedObj(Intersectable):
 
         return isect
 
-# カメラ
-class Camera:
-    def __init__(self):
-        self.eye = None
-        self.origin = None
-        self.xaxis = None
-        self.yaxis = None
-
-  # // 視点からある位置を向くように設定を行う
-    def lookAt(self, eye: Vec, target: Vec, up: Vec,
-                fov: float, width:  int, height: int):
-        
-        self.eye = eye
-        imagePlane = (height / 2) / math.tan(fov / 2)
-        v = target.sub(eye).normalize()
-        self.xaxis = v.cross(up).normalize()
-        self.yaxis = v.cross(self.xaxis)
-        center = v.scale(imagePlane)
-        self.origin = center.sub(
-            self.xaxis.scale(0.5 * width)).sub(self.yaxis.scale(0.5 * height)
-        )
-
-    # スクリーン座標に対する一次レイを返す
-    def ray(self, x: float, y: float):
-        p = self.origin.add(self.xaxis.scale(x)).add(self.yaxis.scale(y))
-        dir = p.normalize()
-        return Ray(self.eye, dir)
-
 class Scene:
     def __init__(self) -> None:
         self.objList = []
         self.lightList = []
-        self.skyColor = None
 
+        self.skyColor = None
+    #===========================================#
+    # Set / Get
+    #===========================================#
     def setSkyColor(self, c):
         self.skyColor = c
     
     def getSkyColor(self):
         return self.skyColor
+    #===========================================#
+    # Trace
+    #===========================================#
+    def trace(self, ray: Ray, depth: int):
+        VACUUM_REFRACTIVE_INDEX = Info.VACUUM_REFRACTIVE_INDEX()
 
+        if Info.DEPTH_MAX() < depth:
+            return Spectrum.BLACK()
+
+        isect = self.findNearestIntersection(ray)
+
+        if not isect.hit():
+            return self.getSkyColor()
+
+        m = isect.material
+
+        dot = isect.n.dot(ray.dir)
+
+        if (dot < 0): # 外部から進入する場合
+            col = self.interactSurface(
+                ray.dir, isect.p, isect.n, m,
+                VACUUM_REFRACTIVE_INDEX / m.refractiveIndex, depth)
+
+            return col.add(m.emissive.scale(-dot))
+
+        else: # 内部から出ていく場合
+            return self.interactSurface(
+                ray.dir, isect.p, isect.n.neg(), m,
+                m.refractiveIndex / VACUUM_REFRACTIVE_INDEX, depth)
+
+    #===========================================#
+    # Method
+    #===========================================#
     def addIntersectable(self, obj: Intersectable):
         self.objList.append(obj)
     
     def addLight(self, light: Light):
         self.lightList.append(light)
 
+    def findNearestIntersection(self, ray: Ray):
+        isect = Intersection()
+        for obj in self.objList:
+            tisect = obj.intersect(ray)
+            
+            if ( tisect.t < isect.t ):
+                isect = tisect
+            
+        return isect
+
+    def lighting(self, p: Vec, n: Vec, m: Material):
+        L = Spectrum.BLACK()
+
+        for light in self.lightList:
+            c = self.diffuseLighting(p, n, m.diffuse, light.pos, light.power)
+            L = L.add(c)
+
+        return L
+
+    def diffuseLighting(
+            self, p: Vec,
+            n: Vec,
+            diffuseColor: Spectrum,
+            lightPos: Vec,
+            lightPower: Spectrum
+        ):
+
+        v = lightPos.sub(p)
+        l = v.normalize()
+        dot = n.dot(l)
+
+        if (dot > 0):
+            if (self.visible(p, lightPos)):
+                r = v.len()
+                factor = dot / (4 * math.pi * r * r)
+                return lightPower.scale(factor).mul(diffuseColor)
+
+        return Spectrum.BLACK()
+
+    def visible(self, org: Vec , target: Vec ):
+        v = target.sub(org).normalize()
+        shadowRay = Ray(org, v)
+        for obj in self.objList:
+            if (obj.intersect(shadowRay).t < v.len()):
+                return False
+
+        return True
+
     # 交点からのレイの方向を求め追跡する
-    def interactSurface(self, rayDir:  Vec,
-            p: Vec , n: Vec, m: Material, eta: float, depth: int):
+    def interactSurface(
+            self, rayDir:  Vec, p: Vec ,
+            n: Vec, m: Material, eta: float, depth: int):
         
         ks = m.reflective
         kt = m.refractive
@@ -366,95 +459,28 @@ class Scene:
             l = li.mul(fr).scale(factor)
 
             return l
-
-    def trace(self, ray: Ray, depth: int):
-        VACUUM_REFRACTIVE_INDEX = Info.VACUUM_REFRACTIVE_INDEX()
-
-        # トレースの最大回数に達した場合は計算を中断する
-        if Info.DEPTH_MAX() < depth:
-            return Spectrum.BLACK()
-
-        # 交点を求める
-        isect = self.findNearestIntersection(ray)
-
-        # [1] 物体と交差しなかった場合は空の色を返す
-        if not isect.hit():
-            return self.getSkyColor()
-
-        m = isect.material
-
-        dot = isect.n.dot(ray.dir)
-
-        if (dot < 0): # 外部から進入する場合
-            col = self.interactSurface(ray.dir, isect.p, isect.n, m, VACUUM_REFRACTIVE_INDEX / m.refractiveIndex, depth)
-            return col.add(m.emissive.scale(-dot))
-
-        else: # 内部から出ていく場合
-            return self.interactSurface(ray.dir, isect.p, isect.n.neg(), m, m.refractiveIndex / VACUUM_REFRACTIVE_INDEX, depth)
-        
-
-    def findNearestIntersection(self, ray: Ray):
-        isect = Intersection()
-        for obj in self.objList:
-            tisect = obj.intersect(ray)
-            
-            if ( tisect.t < isect.t ):
-                isect = tisect
-            
-        return isect
-
-    def lighting(self, p: Vec, n: Vec, m: Material):
-        L = Spectrum.BLACK()
-
-        for light in self.lightList:
-            c = self.diffuseLighting(p, n, m.diffuse, light.pos, light.power)
-            L = L.add(c)
-
-        return L
-
-    def diffuseLighting(
-        self, p: Vec, n: Vec, diffuseColor: Spectrum,
-        lightPos: Vec,  lightPower: Spectrum):
-        v = lightPos.sub(p)
-        l = v.normalize()
-        dot = n.dot(l)
-
-        if (dot > 0):
-        # [1] 交点と光源の間にさえぎるものがないか調べる
-            if (self.visible(p, lightPos)):
-                r = v.len()
-                factor = dot / (4 * math.pi * r * r)
-                return lightPower.scale(factor).mul(diffuseColor)
-
-        return Spectrum.BLACK()
-
-    def visible(self, org: Vec , target: Vec ):
-        v = target.sub(org).normalize()
-        # [2] シャドウレイを求める
-        shadowRay = Ray(org, v)
-        for obj in self.objList:
-            # [3] 交差が判明した時点で処理を打ち切る
-            if (obj.intersect(shadowRay).t < v.len()):
-                return False
-        
-            # [4] シーン中のどの物体ともシャドウレイが交差しない場合にのみtrueを返す
-        return True
-
-class PathTracher:
+#=========================================================#
+# Core
+#=========================================================#
+class Core:
     def __init__(self):
         self.info = Info()
 
         self.scene = Scene()
         self.camera = Camera()
-        
-        self.imageTest = QtGui.QImage(r'F:\Users\Yamagishi\Dropbox\github\Python\scripts\yray\yray_v2\neko.png')
-
         self.initScene()
         self.initCamera()
 
+        self.imageTest = QtGui.QImage(r'C:\Users\ta_yamagishi\Pictures\shibuya.png')
+
+        self.initScene()
+
+    #===========================================#
+    # InitScene
+    #===========================================#
     def initCamera(self):
         self.camera.lookAt(
-            Vec(4.0, 1.5, 6.0), # 視点
+            Vec(3.0, 1.5, 5.0), # 視点
             Vec(0.0, 0.0, 0.0), # 注視点
             Vec(0.0, 1.0, 0.0), # 上方向
             math.radians(40.0), # 視野角
@@ -506,17 +532,27 @@ class PathTracher:
                 mtlFloor2
             )
         )
-    #=====================================#
+    #===========================================#
     # Set / Get
-    #=====================================#
+    #===========================================#
+    def setWidth(self, w: int):
+        self.info.width = w
+
     def width(self):
         return self.info.width
+
+    def setHeight(self, h: int):
+        self.info.height = h
 
     def height(self):
         return self.info.height
 
+    def setSize(self, w: int, h: int):
+        self.setWidth(w)
+        self.setHeight(h)
+
     def size(self):
-        return (self.info.width, self.info.height)
+        return (self.width(), self.height())
 
     def name(self):
         return self.info.name
@@ -524,90 +560,98 @@ class PathTracher:
     def version(self):
         return self.info.version
 
+    def viewColor(self):
+        return self.info.viewColor
+
+    def refresh(self):
+        return self.info.refresh
+
     #=====================================#
     # Method
     #=====================================#
     def calcPixelColor(self, x, y):
-        # [2] sumに計算結果の和を格納する
         SAMPLES = Info.SAMPLES()
-        SAMPLES = 100
         sum = Spectrum.BLACK()
 
         for i in range(SAMPLES):
-            # [3] レイを飛ばし、計算結果をsumに足す
             ray = self.calcPrimaryRay(x, y)
             sum = sum.add(self.scene.trace(ray, 0))
 
-        # [4] sumをサンプル数で割り、計算結果の平均を求める
         return sum.scale(1.0 / SAMPLES).toColor()
-
-    # def calcPixelColor(self, x, y):
-    #     result = self.imageTest.pixel(x,y)
-    #     return result
-
+        
     def calcPrimaryRay(self, x, y):
-        # カメラを用いて一次レイを求める
         return self.camera.ray(
             x + random.uniform(-0.5, 0.5),
             y + random.uniform(-0.5, 0.5)
         )
 
-    def uv(self, x, y):
-        w = self.width()
-        h = self.height()
+    def intersectRaySphere(self, rayDir):
+        v = self.eye.sub(self.sphereCenter)
+        b = rayDir.dot(v)
+        c = v.dot(v) - self.sphereRadius**2
+        d = b*b-c
 
-        r = (x+0.5)/w
-        g = (y+0.5)/h
-        b = 0.0
+        if (0<=d): # 交差した場合、交点までの距離を計算
+            s = math.sqrt(d)
+            t = -b-s
+            
+            if t <= 0:
+                t = -b+s
+            if 0<t:
+                return t
 
-        return (r, g, b)
+        return Info.NO_HIT()
 
-    def random(self):
-        v = random.random()
+    def diffuseLighting(self, p: Vec, n: Vec,):
+        v = self.lightPos.sub(p)
+        l = v.normalize()
         
-        return (v, v, v)
+        dot = n.dot(l)
 
-    def random_color(self):
-        r = random.random()
-        g = random.random()
-        b = random.random()
-        
-        return (r, g, b)
+        if (dot > 0):
+            r = v.len()
+            factor = dot / (4 * math.pi * r * r)
+            return self.lightPower.scale(factor).mult(self.diffuseColor)
+        else:
+            return self.BLACK
 
-    def pnoise(self, x, y, scale = 1.0, octaves=1, seed=1):
-        w = self.width()
-        h = self.height()
-        grid = 100.0
-
-        noise = PerlinNoise(octaves=octaves, seed=seed)
-        v = noise([x/grid*scale, y/grid*scale])
-        v += 0.5
-
-        return (v, v, v)
-
-class Widget(QtWidgets.QWidget):
-    def __init__(self, rend, parent=None):
+#=========================================================#
+# GUI
+#=========================================================#
+# レンダー用Widget
+class RenderWidget(QtWidgets.QWidget):
+    def __init__(self, core, parent=None):
         super().__init__(parent)
-        self.rend = rend
+        self.core = core
 
         self.init()
         self.initSignals()
+
+        # Update Timer
+        self.timer = QtCore.QTimer(self)
+        self.timer.timeout.connect(self.update)
+        self.timer.start(self.core.refresh())
 
     def init(self):
         layout = QtWidgets.QVBoxLayout(self)
 
         # Rendering Button
-        self.button_rend = QtWidgets.QPushButton('Rendering')
-        layout.addWidget(self.button_rend)
+        self.button_render = QtWidgets.QPushButton('Rendering')
+        self.button_render.setMinimumHeight(30)
+        font = QtGui.QFont()
+        font.setFamily('Arial Black')
+        font.setPointSize(11)
+        self.button_render.setFont(font)
+
+        layout.addWidget(self.button_render)
 
         # View
-        w = self.rend.width()
-        h = self.rend.height()
-
-        pixmap = QtGui.QPixmap(w, h)
-        pixmap.fill(QtGui.QColor('grey'))
+        w, h = self.core.size()
+        self.image = QtGui.QImage(w, h, QtGui.QImage.Format_RGB888)
+        self.image.fill(self.core.viewColor())
+        self.pixmap = QtGui.QPixmap(self.image)
         self.view = QtWidgets.QLabel()
-        self.view.setPixmap(pixmap)
+        self.view.setPixmap(self.pixmap)
         self.view.setAlignment(QtCore.Qt.AlignCenter)
         layout.addWidget(self.view)
 
@@ -616,90 +660,145 @@ class Widget(QtWidgets.QWidget):
         layout.addWidget(self.log)
 
     def initSignals(self):
-        self.button_rend.pressed.connect(self.draw)
+        self.button_render.pressed.connect(self.draw)
 
+    #=====================================#
+    # Set / Get
+    #=====================================#
+    def setLog(self, text):
+        self.log.moveCursor(QtGui.QTextCursor.End)
+        self.log.insertPlainText(str(text)+'\n')
+        self.log.ensureCursorVisible()
+        print(text)
+
+    def setImage(self, file):
+        self.image = QtGui.QImage(file)
+        
+        self.updateByImage()
+
+    #=====================================#
+    # Method
+    #=====================================#
+    def updateByImage(self):
+        size = self.image.size()
+        w = size.width()
+        h = size.height()
+
+        self.core.setSize(w, h)
+        self.pixmap = QtGui.QPixmap(self.image)
+        self.view.setPixmap(self.pixmap)
+
+        self.parent().setup()
+        
+    #=====================================#
+    # Draw
+    #=====================================#
     def draw(self):
         start = time.time()
+        self.setLog('> Start Render.')
+        self.setLog(f'Sample:{Info.SAMPLES()}')
 
-        self.setLog('> Start Render')
-
-        w = self.rend.width()
-        h = self.rend.height()
-        
-        pixmap = self.view.pixmap()
-        pixmap.fill(QtGui.QColor('grey'))
-        self.view.update()
-
-        painter = QtGui.QPainter(pixmap)
+        w, h = self.core.size() 
+        self.pixmap = self.view.pixmap()
+        self.pixmap.fill(self.core.viewColor())
+        painter = QtGui.QPainter(self.pixmap)
         pen = QtGui.QPen()
         pen.setWidth(1)
 
         for y in range(h):
             for x in range(w):
-                r, g, b = self.rend.calcPixelColor(x, y)
+                r, g, b = self.core.calcPixelColor(x, y)
+
                 color = QtGui.QColor(r, g, b)
-        
                 pen.setColor(color)
                 painter.setPen(pen)
                 painter.drawPoint(x, y)
-                self.view.repaint()
-                QtWidgets.QApplication.processEvents()
                 
-        self.setLog('Finished.')
+                QtWidgets.QApplication.processEvents()
 
+        painter.end()
+        self.setLog('Render Finished.')
+        
         elapsed = time.time() - start
-        result = f'{elapsed:.3f} sec.'
-        self.setLog(result)
+        m, s = divmod(elapsed, 60)
+        log = f'Time = {int(m)}m{s:.3f}s'
+        self.setLog(log)
         self.setLog('')
+        self.parent().status_bar.showMessage(log)
 
-        self.parent().status_bar.showMessage(result)
+        self.update()
 
-    #===========================================#
-    # Set / Get
-    #===========================================#
-    def setLog(self, text):
-        self.log.moveCursor(QtGui.QTextCursor.End)
-        self.log.insertPlainText(text+'\n')
-        self.log.ensureCursorVisible()
-
+# メインウィンドウ
 class MainWinodw(QtWidgets.QMainWindow):
-    def __init__(self, rend, parent=None):
+    def __init__(self, core, parent=None):
         super().__init__(parent)
 
-        self.rend = rend
+        self.core = core
 
-        self.widget = Widget(rend)
-        self.setCentralWidget(self.widget)
+        self.init()
+        self.setup()
 
+    def setup(self):
+        w, h = self.core.size()
+        self.resize(w+100, h)
+
+        title = f'{self.core.name()} {self.core.version()} : [{w} x {h}]'
+        self.setWindowTitle(title)
+
+    def init(self):
+        #=====================================#
+        # Central Widget
+        #=====================================#
+        self.render_widget = RenderWidget(self.core)
+        self.setCentralWidget(self.render_widget)
+
+        #=====================================#
         # Menubar
+        #=====================================#
         self.menu_bar = self.menuBar()
 
+        # File Menu
         self.menu_file = self.menu_bar.addMenu('File')
-
+        
+        # Save Menu
         action = QtWidgets.QAction('Save', self)
+        action.triggered.connect(self.saveImage)
         action.setShortcut(QtGui.QKeySequence('Ctrl+S'))
-        action.triggered.connect(self.save_image)
         self.menu_file.addAction(action)
+
+        action = QtWidgets.QAction('Load', self)
+        action.triggered.connect(self.loadImage)
+        action.setShortcut(QtGui.QKeySequence('Ctrl+L'))
+        self.menu_file.addAction(action)
+
+        self.menu_file.addSeparator()
 
         action = QtWidgets.QAction('Exit', self)
         action.setShortcut(QtGui.QKeySequence('Ctrl+Q'))
         action.triggered.connect(self.exit)
         self.menu_file.addAction(action)
 
-        # StatusBar
+        # Edit Menu
+        self.menu_edit = self.menu_bar.addMenu('Edit')
+
+        # Copy Menu
+        action = QtWidgets.QAction('Copy', self)
+        action.triggered.connect(self.copyImage)
+        action.setShortcut(QtGui.QKeySequence('Ctrl+C'))
+        self.menu_edit.addAction(action)
+
+        action = QtWidgets.QAction('Paste', self)
+        action.triggered.connect(self.pasteImage)
+        action.setShortcut(QtGui.QKeySequence('Ctrl+V'))
+        self.menu_edit.addAction(action)
+
+        #=====================================#
+        # Statsubar
+        #=====================================#
         self.status_bar = self.statusBar()
 
-        # resize
-        w = self.rend.width()
-        h = self.rend.height()
-        self.resize(w+100, h)
-
-        # Title
-        title = f'{self.rend.name()} {self.rend.version()}'
-        self.setWindowTitle(title)
-
-    def save_image(self):
-        print('Save Image')
+    def saveImage(self):
+        self.render_widget.setLog('> Save Image')
 
         path = os.path.dirname(os.path.abspath(__file__))
         file, ext = QtWidgets.QFileDialog.getSaveFileName(
@@ -707,18 +806,50 @@ class MainWinodw(QtWidgets.QMainWindow):
             dir = path,
             filter = '*.png'
         )
+        
+        if file:
+            pixmap = self.render_widget.view.pixmap()
+            pixmap.save(file)
+            self.render_widget.setLog(f'File = {file}\n')
+
+    def loadImage(self):
+        path = os.path.dirname(os.path.abspath(__file__))
+        file, ext = QtWidgets.QFileDialog.getOpenFileName(
+            self,
+            dir = path,
+            filter = '*.png *.jpg'
+        )
 
         if file:
-            pixmap = self.widget.view.pixmap()
-            pixmap.save(file)
+            self.render_widget.setLog('> Load Image')
+            self.render_widget.setLog(f'File = {file}\n')
+
+            image = QtGui.QImage(file)
+            self.render_widget.setImage(image)
+    
+    def copyImage(self):
+        self.render_widget.setLog('> Copy Image')
+
+        cb = QtGui.QClipboard()
+        pixmap = self.render_widget.pixmap
+
+        cb.setPixmap(pixmap)
+
+    def pasteImage(self):
+        self.render_widget.setLog('> Paste Image')
+
+        cb = QtGui.QClipboard()
+        image = cb.image()
+
+        self.render_widget.setImage(image)
 
     def exit(self):
-        self.close()
+        self.close()   
 
 def main():
     app = QtWidgets.QApplication(sys.argv)
-    rend = PathTracher()
-    view = MainWinodw(rend)
+    core = Core()
+    view = MainWinodw(core)
     view.show()
     sys.exit(app.exec_())
 
