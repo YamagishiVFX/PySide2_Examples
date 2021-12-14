@@ -3,7 +3,7 @@
 # https://raytracing.xyz/
 # https://www.pythonguis.com/tutorials/bitmap-graphics/
 # 
-# Client : Python 3.7.9 & PySide2
+# Python 3.7.9 & PySide2
 # Coding by Tatsuya Yamagishi
 # Updated : DEC 14 2021
 # Created : DEC 10 2021
