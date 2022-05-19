@@ -8,6 +8,10 @@ Blog:[VFXのためのPySideまとめ](https://yamagishi-2bit.blogspot.com/2021/0
 * Python 3.7.9
 * PySide2 (Qt 5.15.2)
 
+## Relase Note:
+2022/05/06
+- QCheckBox Added
+
 ## Installation:
 **PySide2:** https://pypi.org/project/PySide2/
 ```
@@ -60,6 +64,14 @@ from PySide2.QtWidgets import *
 
 ## Qt.py
 https://github.com/mottosso/Qt.py
+
+### Import Example:
+```Python
+try:
+    from PySide2 import QtCore, QtGui, QtWidgets
+except:
+    from Qt import QtCore, QtGui, QtWidgets
+```
 
 ## Examples 
 * QDialog

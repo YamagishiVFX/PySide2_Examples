@@ -32,7 +32,7 @@ class Info:
     _EPSILON: float = 0.001
     _DEPTH_MAX: int = 10
     _VACUUM_REFRACTIVE_INDEX: float = 1.0
-    _SAMPLES: int = 100
+    _SAMPLES: int = 4
     _DISPLAY_GAMMA: float = 2.2
 
     @classmethod
@@ -207,8 +207,9 @@ class Camera:
     xaxis: Vec = None
     yaxis: Vec = None
 
-    def lookAt(self, eye: Vec, target: Vec, up: Vec,
-                fov: float, width:  int, height: int):
+    def lookAt(
+        self, eye: Vec, target: Vec, up: Vec,
+        fov: float, width:  int, height: int ):
         
         self.eye = eye
         imagePlane = (height / 2) / math.tan(fov / 2)
@@ -316,6 +317,7 @@ class TexturedObj(Intersectable):
         if isect.hit():
             u = isect.p.sub(self.origin).dot(self.uDir) / self.size
             u = math.floor((u - math.floor(u)) * self.image.width())
+            
             v = -isect.p.sub(self.origin).dot(self.vDir) / self.size
             v = math.floor((v - math.floor(v)) * self.image.height())
 
@@ -688,6 +690,8 @@ class RenderWidget(QtWidgets.QWidget):
         self.pixmap = QtGui.QPixmap(self.image)
         self.view.setPixmap(self.pixmap)
 
+        self.core.initCamera()
+
         self.parent().setup()
         
     #=====================================#
@@ -766,9 +770,9 @@ class MainWinodw(QtWidgets.QMainWindow):
         action.setShortcut(QtGui.QKeySequence('Ctrl+S'))
         self.menu_file.addAction(action)
 
-        action = QtWidgets.QAction('Load', self)
-        action.triggered.connect(self.loadImage)
-        action.setShortcut(QtGui.QKeySequence('Ctrl+L'))
+        action = QtWidgets.QAction('Open', self)
+        action.triggered.connect(self.openImage)
+        action.setShortcut(QtGui.QKeySequence('Ctrl+O'))
         self.menu_file.addAction(action)
 
         self.menu_file.addSeparator()
@@ -812,7 +816,7 @@ class MainWinodw(QtWidgets.QMainWindow):
             pixmap.save(file)
             self.render_widget.setLog(f'File = {file}\n')
 
-    def loadImage(self):
+    def openImage(self):
         path = os.path.dirname(os.path.abspath(__file__))
         file, ext = QtWidgets.QFileDialog.getOpenFileName(
             self,
@@ -821,7 +825,7 @@ class MainWinodw(QtWidgets.QMainWindow):
         )
 
         if file:
-            self.render_widget.setLog('> Load Image')
+            self.render_widget.setLog('> Open Image')
             self.render_widget.setLog(f'File = {file}\n')
 
             image = QtGui.QImage(file)
@@ -844,7 +848,7 @@ class MainWinodw(QtWidgets.QMainWindow):
         self.render_widget.setImage(image)
 
     def exit(self):
-        self.close()   
+        self.close() 
 
 def main():
     app = QtWidgets.QApplication(sys.argv)

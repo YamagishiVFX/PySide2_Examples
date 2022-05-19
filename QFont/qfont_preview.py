@@ -22,6 +22,7 @@ class FontPreviewQt(QtWidgets.QWidget):
 
         self.initUi()
         self.setupSingals()
+        self.setFont('Times New Roman')
 
     #===========================================#
     # init Ui
@@ -111,6 +112,10 @@ class FontPreviewQt(QtWidgets.QWidget):
     #===========================================#
     def setSize(self, size):
         self._size.setValue(size)
+
+    def setFont(self, font):
+        font = QtGui.QFont(font)
+        self._font.setCurrentFont(font)
 
 class View(QtWidgets.QDialog):
     _name = 'QFont Preview'
