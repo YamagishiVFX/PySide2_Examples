@@ -9,8 +9,14 @@ Blog:[VFXのためのPySideまとめ](https://yamagishi-2bit.blogspot.com/2021/0
 * PySide2 (Qt 5.15.2)
 
 ## Relase Note:
+2022/06/10
+- Added: QTreeWidget
+
+2022/05/19
+- Added: Qt.py Import Example 
+
 2022/05/06
-- QCheckBox Added
+- Added: QCheckBox 
 
 ## Installation:
 **PySide2:** https://pypi.org/project/PySide2/
@@ -19,7 +25,7 @@ python -m pip install --upgrade pip
 pip install PySide2
 ```
 
-**check PySide2**
+**Check PySide2**
 ```
 pip show PySide2
 ```
