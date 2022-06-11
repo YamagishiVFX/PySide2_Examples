@@ -62,12 +62,16 @@ class MyItemWidget(QtWidgets.QWidget):
         if self.data.age > 29:
             self.setStyleSheet(style)
 
+    def get_data(self):
+        return self.data
+
 
 class MyTreeWidget(QtWidgets.QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
 
-        self.VERSION = 'v1.0.0'
+        self.NAME = 'MyTreeWidget'
+        self.VERSION = 'v1.1.1'
         self.HEADERS = ['Person', 'Description']
         self.SORTED_BY_COLUMN = 0
         self.HEADE1_SIZE = 200
@@ -75,6 +79,8 @@ class MyTreeWidget(QtWidgets.QWidget):
 
         self.init_ui()
 
+        # Init Signals
+        self.tree_widget.itemClicked.connect(self.item_activated)
 
     def init_ui(self):
         self.main_layout = QtWidgets.QVBoxLayout(self)
@@ -90,7 +96,7 @@ class MyTreeWidget(QtWidgets.QWidget):
         self.tree_widget.setRootIsDecorated(False)
         self.main_layout.addWidget(self.tree_widget)
 
-        self.setWindowTitle(f'Custom TreeWidget Example {self.VERSION}')
+        self.setWindowTitle(f'{self.NAME} {self.VERSION}')
         self.resize(*self.WINDOW_SIZE)
 
 
@@ -100,13 +106,9 @@ class MyTreeWidget(QtWidgets.QWidget):
 
         for d in data_dict:
             data = Data(**d)
-            category = data.category
 
             # Top Item
-            top_item = self.get_top_item(category)
-            if top_item is None:
-                top_item = QtWidgets.QTreeWidgetItem(ui)
-                top_item.setText(0, category)
+            top_item = self.get_top_item(data.category)
 
             # Item
             item = QtWidgets.QTreeWidgetItem(top_item)
@@ -115,6 +117,7 @@ class MyTreeWidget(QtWidgets.QWidget):
 
         ui.sortByColumn(self.SORTED_BY_COLUMN, QtCore.Qt.AscendingOrder)
         ui.expandToDepth(0)
+
 
     def get_top_item(self, name):
         ui = self.tree_widget
@@ -128,7 +131,18 @@ class MyTreeWidget(QtWidgets.QWidget):
                     result = item
                     break
         
+        if result is None:
+            result = QtWidgets.QTreeWidgetItem(ui)
+            result.setText(0, name)
+
         return result
+
+
+    def item_activated(self, item):
+        if item:
+            widget = self.tree_widget.itemWidget(item, 0)
+            print(widget)
+            print(widget.get_data())
 
 app = QtWidgets.QApplication([])
 view = MyTreeWidget()
