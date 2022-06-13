@@ -1,3 +1,10 @@
+"""
+PySide2 QMainWindow simple example:
+
+Updated : v1.0.1 2022/06/13
+
+Created : 2022/06/13
+"""
 import sys
 
 from PySide2 import QtWidgets
@@ -10,5 +17,4 @@ if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
     view = MyWindow()
     view.show()
-    
-    sys.exit(app.exec_())
+    app.exec_()

@@ -9,14 +9,11 @@ Blog:[VFXのためのPySideまとめ](https://yamagishi-2bit.blogspot.com/2021/0
 * PySide2 (Qt 5.15.2)
 
 ## Relase Note:
+2022/06/11
+- Updated : QTreeWidget
+
 2022/06/10
 - Added: QTreeWidget
-
-2022/05/19
-- Added: Qt.py Import Example 
-
-2022/05/06
-- Added: QCheckBox 
 
 ## Installation:
 **PySide2:** https://pypi.org/project/PySide2/
@@ -27,7 +24,13 @@ pip install PySide2
 
 **Check PySide2**
 ```
+pip list -o
 pip show PySide2
+```
+
+**Updrade Package**
+```
+pip install -U PySide2
 ```
 ## Darkstyle:
 **QDarkstyle:** https://pypi.org/project/QDarkStyle/
@@ -38,15 +41,13 @@ pip install QDarkStyle
 ## Import PySide2:
 ### Example1:
 ```Python
-import sys
-
 from PySide2 import QtCore, QtGui, QtWidgets
 
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
     view = QtWidgets.QWidget()
     view.show()
-    sys.exit(app.exec_())
+    app.exec_()
 ```
 ### Example2:
 ```Python
