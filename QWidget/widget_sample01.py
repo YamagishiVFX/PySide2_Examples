@@ -10,4 +10,4 @@ if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
     view = MyWidget()
     view.show()
-    sys.exit(app.exec_())
+    app.exec_()

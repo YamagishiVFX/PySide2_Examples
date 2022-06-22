@@ -1,44 +1,64 @@
 """
 Reference From:
-https://stackoverflow.com/questions/20282965/how-to-display-a-list-of-qpushbutton 
+https://doc-snapshots.qt.io/qtforpython/PySide2/QtWidgets/QListWidgetItem.html#PySide2.QtWidgets.PySide2.QtWidgets.QListWidgetItem.setBackground
+
+Version:
+    * version = 'v1.0.0',
+    * updated = '2022-06-20',
+    * created = '2022-06-20',
+    * updated_by = 'Tatsuya YAMAGISHI',
+    * created_by = 'Tatsuya YAMAGISHI',
+    * coding = 'Python 3.7.9 & PySide2',
 """
 
+import sys
 
-from PySide2 import QtCore, QtGui, QtWidgets
+# from PySide2 import QtCore, QtGui, QtWidgets
+from PySide2 import QtGui, QtWidgets
 
-class Window(QtWidgets.QWidget):
-    def __init__(self):
-        QtWidgets.QWidget.__init__(self)
-        self.list = QtWidgets.QListWidget(self)
-        layout = QtWidgets.QVBoxLayout(self)
-        layout.addWidget(self.list)
 
-    def addListItem(self, text):
-        item = QtWidgets.QListWidgetItem(text)
-        self.list.addItem(item)
-        
-        widget = QtWidgets.QWidget(self.list)
-        button = QtWidgets.QToolButton(widget)
-        layout = QtWidgets.QHBoxLayout(widget)
-        layout.setContentsMargins(0, 0, 0, 0)
-        layout.addStretch()
-        layout.addWidget(button)
-        
-        self.list.setItemWidget(item, widget)
-        
-        button.clicked[()].connect(
-            lambda: self.handleButtonClicked(item))
+ITEMS = [
+    ('Red', (255, 100, 100), ),
+    ('Green', (100, 255, 100),),
+    ('Blue', (100, 100, 255), ),
+]
 
-    def handleButtonClicked(self, item):
-        print(item.text())
+
+class View(QtWidgets.QWidget):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+
+        # Parent=selfで self.setLayout(layout) を省略
+        self.main_layout = QtWidgets.QVBoxLayout(self)
+        # self.main_layout.setContentsMargins(0, 0, 0, 0)
+
+        self.list = QtWidgets.QListWidget()
+        self.main_layout.addWidget(self.list)
+
+
+    def add_items(self, ITMES):
+        self.list.clear()
+
+        for ITEM in ITEMS:
+            """
+             Pythonは *でアンパック, **でパック
+             QColorに (255, 100, 100) というタプルではなく 255, 100, 100 と3つの数値で渡している。
+                
+                r, g, b = (255, 100, 100)
+                QtGui.QColor(r, g, b,)
+            
+            のような処理を省略
+
+            """
+            
+            item = QtWidgets.QListWidgetItem(ITEM[0], self.list)
+            q_color = QtGui.QColor( *ITEM[1] ) 
+            item.setBackground(q_color)
+
 
 if __name__ == '__main__':
-
-    import sys
     app = QtWidgets.QApplication(sys.argv)
-    window = Window()
-    for label in 'red blue green yellow purple'.split():
-        window.addListItem(label)
-    window.setGeometry(500, 300, 300, 200)
-    window.show()
-    sys.exit(app.exec_())
+    view = View()
+    view.add_items(ITEMS)
+    view.show()
+    app.exec_()

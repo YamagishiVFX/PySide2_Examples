@@ -1,59 +1,57 @@
 """
 Reference From:
-https://stackoverflow.com/questions/25187444/pyqt-qlistwidget-custom-items
+https://doc-snapshots.qt.io/qtforpython/PySide2/QtWidgets/QListWidgetItem.html#PySide2.QtWidgets.PySide2.QtWidgets.QListWidgetItem.setBackground
+
+Version:
+    * version = 'v1.0.0',
+    * updated = '2022-06-20',
+    * created = '2022-06-20',
+    * updated_by = 'Tatsuya YAMAGISHI',
+    * created_by = 'Tatsuya YAMAGISHI',
+    * coding = 'Python 3.7.9 & PySide2',
 """
 
+import sys
 
-from PySide2 import QtCore, QtGui, QtWidgets
+# from PySide2 import QtCore, QtGui, QtWidgets
+from PySide2 import QtGui, QtWidgets
+
 
 ITEMS = [
-    ('No.1', 'Meyoko', ),
-    ('No.2', 'Nyaruko',),
-    ('No.3', 'Louise', ),
+    ('Red', (255, 100, 100), ),
+    ('Green', (100, 255, 100),),
+    ('Blue', (100, 100, 255), ),
 ]
 
-class MyWidget(QtWidgets.QWidget):
-    def __init__(self, item, parent = None):
+class Item(QtWidgets.QListWidgetItem):
+    def __init__(self, item, parent=None):
         super().__init__(parent)
-        self.main_layout = QtWidgets.QVBoxLayout(self)
 
-        self.label_1 = QtWidgets.QLabel('Label_1')
-        self.main_layout.addWidget(self.label_1)
-
-        self.label_2 = QtWidgets.QLabel('Label_2')
-        self.main_layout.addWidget(self.label_2)
-
-        self.button = QtWidgets.QPushButton()
-        self.main_layout.addWidget(self.button)
-
-        self.setItem(item)
-
-    def setItem(self, item):
         self.item = item
+        self.setText(item[0])
+        self.setBackground(QtGui.QColor(*item[1]))
 
-        self.label_1.text(item[0])
-        self.label_2.text(item[1])
 
-class Window(QtWidgets.QWidget):
-    def __init__(self):
-        QtWidgets.QWidget.__init__(self)
-        self.list = QtWidgets.QListWidget(self)
-        layout = QtWidgets.QVBoxLayout(self)
-        layout.addWidget(self.list)
+class View(QtWidgets.QWidget):
+    def __init__(self, parent=None):
+        super().__init__(parent)
 
-    def addListItem(self, items):
+        # Parent=selfで self.setLayout(layout) を省略
+        self.main_layout = QtWidgets.QVBoxLayout(self)
+        # self.main_layout.setContentsMargins(0, 0, 0, 0)
+
+        self.list = QtWidgets.QListWidget()
+        self.main_layout.addWidget(self.list)
+
+    def add_items(self, ITMES):
         self.list.clear()
-        for item in items:
-            widget = MyWidget(item)
 
+        for ITEM in ITEMS:           
+            item = Item(ITEM, self.list)
 
 if __name__ == '__main__':
-
-    import sys
     app = QtWidgets.QApplication(sys.argv)
-    window = Window()
-    for label in 'red blue green yellow purple'.split():
-        window.addListItem(ITEMS)
-    window.setGeometry(500, 300, 300, 200)
-    window.show()
-    sys.exit(app.exec_())
+    view = View()
+    view.add_items(ITEMS)
+    view.show()
+    app.exec_()
