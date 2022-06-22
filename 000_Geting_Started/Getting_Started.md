@@ -9,33 +9,38 @@ Created: 2022/06/21 Tatsuya YAMAGISHI
 - [VFXのためのPySideまとめ](https://yamagishi-2bit.blogspot.com/2021/09/pyside.html)
 
 ## 概要：
-1. Python3のインストール:
-2. PySide2インストール:
-3. 開発環境:
-4. Qアプリケーションの作成:
-5. Import PySide2:
-6. GUIの作成:
-   1. QtDesigner
-7. Windowの作成:
-   1. QMainWIndow
-   2. QDialog
-   3. QWidet
-8. Widgetの継承基本系:
-   1. クラスの継承
-9. Widgetのカスタマイズ:
-   1. Parent
-10. Layout:
-11. シグナルの設定:
-12. DialogやMainWindowに作成したWidgetを配置:
-13. Examples:
+0. [始めに](#intro)
+1. [Python3のインストール:](#install_python)
+2. [PySide2インストール:](#install_pyside2)
+3. [開発環境:](#develop)
+4. [Qアプリケーションの作成:](#qaplication)
+5. [Import PySide2:](#import)
+6. [GUIの作成:QtDesigner](#qtdesigner)
+7. [Windowの作成:](#window)
+   1. [QDialog](#qdialog)
+   1. [QMainWIndow](#qmainwindow)
+   1. [QWidet](#qwidget)
+8. [Widgetのカスタマイズ基本:](#customize_basic)
+9. [Widgetのカスタマイズ:](#customize)
+10. [QLayout:](#qlayout)
+11. [シグナルの設定:](#signal)
+12. [DialogやMainWindowに作成したWidgetを配置:](#gui)
+13. [Examples:](#examples)
 
 
-## 0. はじめに
+
+<a id="intro"></a>
+
+# 0. はじめに
 - PySide2はQt5(C++のライブラリ)をPythonで使えるようにしたライブラリ。
 - PySide2のプログラムは `クラス` を使うため、Pythonのクラスの基本的な知識があると良い。
 - **記事の内容に一切の責任を持ちません。**
 
-## 1. Python3のインストール
+
+
+<a id="install_python"></a>
+
+# 1. Python3のインストール
 Pythonのインストールに関しては色々解説があると思うのでここでは割愛。
 
 ### VFX用途のPythonのバージョンについて
@@ -49,7 +54,9 @@ Pythonのインストールに関しては色々解説があると思うので�
 ### 参考：
 - [Pythonのバージョンを確認、表示（sys.versionなど）](https://note.nkmk.me/python-sys-platform-version-info/)
 
-## 2. PySide2 インストール：
+
+<a id="install_pyside2"></a>
+# 2. PySide2 インストール：
 
 ### 参考：
 - [pipでアップデートするときのコマンド pip update](https://qiita.com/HyunwookPark/items/242a8ceea656416b6da8)
@@ -95,7 +102,11 @@ pip list -o
 ```
 
 
-## 3. 開発環境
+
+
+<a id="develop"></a>
+
+# 3. 開発環境
 ### VSCodeのインストール
 - コードエディタとしてVSCodeをインストール
 - MayaなどのVFXツールは `簡易コードエディタ` を搭載してるためVFXツールで開発する場合は必ず準備する必要はない。
@@ -104,8 +115,6 @@ pip list -o
     ![image](https://i.gyazo.com/a70de37f8f1609d7a447dfdbcb494af1.png)
   
 - `VSCode` 以外のエディタでは `PyCharm` の名前をよく耳にする。
-
-
 
 
 ### Python拡張をインストール
@@ -154,7 +163,13 @@ python test.py
 | Alt + PgUp/PgDn | カーソル位置を変えずにスクロール | 
 
 
-## 3. Qアプリケーション作成
+
+
+
+
+<a id="qaplication"></a>
+
+# 4. Qアプリケーション作成
 
 アプリケーション作成最小コード
 
@@ -216,7 +231,12 @@ window.show()
 などが同じコードでウィンドウを表示出来る。
 
 
-## 5. Import PySide2
+
+
+
+<a id="import"></a>
+
+# 5. Import PySide2
 - [関連：import PySide](https://yamagishi-2bit.blogspot.com/2021/11/pyside2-import-pyside-vfx.html)
   - ここでは以下の方式を使用。
   - いくつかimportの方式があり、それぞれメリットデミリットがあるように思えるが、僕個人は `最適` を提案出来るほど知識を有していない。
@@ -255,7 +275,9 @@ Result：表示されるバージョンはPySideのバージョン問よりはCo
 5.15.0
 ```
 
-## 6.GUIの作成
+<a id="qtdesigner"></a>
+
+# 6.GUIのデザイン：QtDesigner
 ここではプログラムコード主体で進めていくが、GUIのデザインは `QtDesigner` を使うと楽。
 
 - 関連：[QtDesignerで学ぶQtの基本概念](https://yamagishi-2bit.blogspot.com/2021/11/pyside2-qtdesignerqt-vfx.html)
@@ -265,17 +287,23 @@ Result：表示されるバージョンはPySideのバージョン問よりはCo
 
 
 
-## 7. Windowの作成
+
+<a id="window"></a>
+
+# 7. Windowの作成
 PySide2で準備されているWindow用のウィジェットは
 
 - `QDialog`
 - `QMainWindow`
 
-の２つ。
+の２つ
+
+- `QWidget` は定義の仕方でWindowとしてもパーツとしても振舞う
 
 ---
 
-### QDialog：ウィンドウとして表示
+<a id="qdialog"></a>
+### 7.1 QDialog：ウィンドウとして表示
 - 公式[PySide2 QDialog](https://doc.qt.io/qtforpython-5/PySide2/QtWidgets/QDialog.html)
 
 最も簡単にWindowの作成、運用が可能。
@@ -368,7 +396,11 @@ QDialogから派生する様々な種類のダイアログがあるようだ。
 ![](https://i.gyazo.com/492c8f0bac409df65e9fbf8967bdede7.jpg)
 
 
-### QMainWindow
+
+
+<a id="qmainwindow"></a>
+
+### 7.2QMainWindow
 先ほどのQWidgetと表示は全く同じだが、QMainWindowはメニューバーやステータスバーを使えるようだ。
 
 ![](https://i.gyazo.com/0aae8bd03f9657f2734c4e8fb4d067e2.png)
@@ -479,6 +511,7 @@ app.exec_()
 ----
 
 
+<a id="qwidget"></a>
 ### QWidget
 - 全てのWidgetのベース。これをベースに様々なWidgetに派生している。
 - 後述する **parentの指定によって挙動が変わる。**
@@ -554,10 +587,14 @@ view.show()
 app.exec_()
 ```
 
-## Widgetのカスタマイズ基本系
+
+
+<a id="customize_basic"></a>
+
+# 8. Widgetのカスタマイズ基本
 - `QDialog`、`QMainWinodw` を始め様々なWidgetがあるが、`QWidget` から派生しているため、基本的な挙動はWidgetでも同じ。
 
-### 基本系
+### 基本形
 - 特定のWidgetのクラスを継承し拡張するやり方が基本
 
 Example: QWidgetのカスタマイズ
@@ -699,7 +736,11 @@ view.show()
 app.exec_()
 ```
 
-## Widgetのカスタマイズ
+
+
+<a id="customize"></a>
+
+# 9. Widgetのカスタマイズ
 - 基本的にはどのクラスでも問題ない。
 - `QWidget` は `QDialog` や `QMainWindow` のように、**用途が明確では無い**ので必要に応じて拡張が出来る。
 
@@ -755,7 +796,11 @@ QtDesignerなら、レイアウトを簡単に出来るが・・・
 ![image](https://i.gyazo.com/5a6bb2436206eb0c867ecf07dc1a25a1.png)
 
 
-### QLayout
+
+
+<a id="qlayout"></a>
+
+# 10.QLayout
 数値でレイアウトしていくのは大変なので、PySideでのWidgetのレイアウトは基本的に `QLayout` を使って行っていく。
 
 QLayoutは
@@ -975,7 +1020,10 @@ QLayoutの引数parentにWidgetクラスを指定すれば、setLayout()の処�
 
 など。
 
-## 11. シグナルの設定
+
+<a id="signal"></a>
+
+# 11. シグナルの設定
 PySideでUIを操作した際の処理を定義するためには `signal` を使うのが基本のようだ。
 
 ### テスト用スクリプト
@@ -1282,7 +1330,11 @@ view.show()
 app.exec_()
 ```
 
-## 作成したWidgetをDialogやMainWindowに配置
+
+
+<a id="gui"></a>
+
+# 作成したWidgetをDialogやMainWindowに配置
 - PySideの仕様上 `QWidget`、`QDalog`,`QMainWindow` は同じようにも使える。
 - `QWidgetクラス` は汎用性が高い。
 - `QDialog` や `QMainWindow` は用途が明確。
@@ -1351,7 +1403,11 @@ QMainWindowのメインとなるエリアは `CentralWidget` と呼ばれる。�
 ![image](https://i.gyazo.com/df9290b8388021fefe257c502ea5ca38.png)
 
 
-## Examples：
+
+
+<a id="examples"></a>
+
+# Examples：
 ![image](https://i.gyazo.com/38ef3aeaa7aa4d43eb683db33e64ea5c.png)
 
 ```Python
