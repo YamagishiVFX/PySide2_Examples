@@ -1,5 +1,5 @@
-# PySide2 Getting Started
-Updated: 
+# PySide2 : Getting Started
+Updated: 2022/06/22 Tatsuya YAMAGISHI
 
 Created: 2022/06/21 Tatsuya YAMAGISHI
 
@@ -31,27 +31,27 @@ Created: 2022/06/21 Tatsuya YAMAGISHI
 
 
 ## 0. はじめに
-- PySide2のコアはQt5(C++のライブラリ)
-- PyQt5という似たようなライブラリもある
-  - [PyQt5 vs. Qt for Python(PySide2)](https://qiita.com/ynuma/items/a005bf5538e282030460)
-  - VFXではKatanaなど一部ツールがPyQtを採用
-- PySide2のプログラムは `クラス` を使うため、Pythonのクラスの基本的な知識が必要。
+- PySide2はQt5(C++のライブラリ)をPythonで使えるようにしたライブラリ。
+- PySide2のプログラムは `クラス` を使うため、Pythonのクラスの基本的な知識があると良い。
+- **記事の内容に一切の責任を持ちません。**
 
 ## 1. Python3のインストール
 Pythonのインストールに関しては色々解説があると思うのでここでは割愛。
 
-### Pythonのバージョンについて
-- VFX用途の場合は2022/06/21現在、`3.9の最新` がいいのではないかと思う。
-- 主要ツールが3.7系なので `下位互換を意識する場合は3.7系の最新` が良いか。
-- サポート終了、PySide2がPython2.7で動かないなど、**Python2系の選択は論外**。
-- [VFX Reference Platform](https://vfxplatform.com/)などを参照。
-  - CY2023 DRAFTに `Python3.10.x` の記載があるため、先を見越して `3.10` を選択するのもいいかも？3.10系では型に関する部分など、根本部分の仕様変更があるようだ。
-  - [Python 3.10ではもう float から int への暗黙的変換を行いません。つまり、従来は float タイプの値を受け入れていた関数で、タイプエラーが発生するということです。
-浮動小数点数の引数は明示的に整数に変換する必要がありま](https://wiki.blender.jp/Dev:JA/Ref/Release_Notes/3.10/Python_API)
+### VFX用途のPythonのバージョンについて
+- **3.9系：** : 2022/06/21現在のお勧め。VFX搭載のPythonは3.7系が多い印象なので注意が必要。
+- **3.7系：** : 主要ツールが3.7系なので **互換を意識したい場合はおすすめ** 。 
+  - 3.7以降追加された関数を使わなければ 3.9で問題ないと思われる。
+- **Python2系の選択は論外** : サポート終了、PySide2がPython2.7で動かないなど
+- **3.10系** ：CY2023 Draftに Python3.10 の文字があるため、将来性を意識したい場合。
+  - [VFX Reference Platform](https://vfxplatform.com/)
+
+### 参考：
+- [Pythonのバージョンを確認、表示（sys.versionなど）](https://note.nkmk.me/python-sys-platform-version-info/)
 
 ## 2. PySide2 インストール：
 
-### 参考
+### 参考：
 - [pipでアップデートするときのコマンド pip update](https://qiita.com/HyunwookPark/items/242a8ceea656416b6da8)
 - [pipでいれたパッケージを一括アップデート](https://dragstar.hatenablog.com/entry/2016/09/02/113243)
 - 関連：[[PySide2] インストール [VFX]](https://yamagishi-2bit.blogspot.com/2021/11/vfx-vfxpyside2-pyside2.html)
@@ -98,18 +98,19 @@ pip list -o
 ## 3. 開発環境
 ### VSCodeのインストール
 - コードエディタとしてVSCodeをインストール
-- MayaなどのVFXツールでは各ツールの `簡易コードエディタ` で代用可能なので、ここを飛ばしても開発は可能。
+- MayaなどのVFXツールは `簡易コードエディタ` を搭載してるためVFXツールで開発する場合は必ず準備する必要はない。
   - VSCodeなどの高機能エディタは `スペルミス` や `補完機能` など便利な機能が沢山あるため `VSCode` などの高機能エディタの使用を推奨。これに慣れてしまうと普通のドキュメント作成もVSCodeが手放せなくなってくる・・・。
-  
-- `VSCode` 以外のエディタではPythonだと `PyCharm` の名前をよく耳にする。
-- Python単体では `JupyterLab`、`Google Colaboratory` なども便利だが PySideが `画面作成` のためのライブラリなのであまり相性が良くないように感じる。（主観）
 
     ![image](https://i.gyazo.com/a70de37f8f1609d7a447dfdbcb494af1.png)
+  
+- `VSCode` 以外のエディタでは `PyCharm` の名前をよく耳にする。
+
+
 
 
 ### Python拡張をインストール
-- 言語は `日本語` に設定して問題ないと思います。
-- 左のツールバーのエクステンションなどからPythonの拡張をインストール
+- 言語は `日本語` に設定して問題ないと思う。日本語使うと挙動がおかしくなる貧弱なVFXとは出来が違う。
+- 左のツールバーのエクステンションなどから **Python拡張をインストール**
 
 ![](https://i.gyazo.com/a12b8c984f90b87ef7421532434f1109.png)
 
@@ -121,10 +122,15 @@ pip list -o
 
 ![](https://i.gyazo.com/47e4c22b22258078972e2d57dd49afaf.jpg)
 
-ターミナル（コマンドプロンプト）などでコマンドで実行
+
+#### ターミナル（コマンドプロンプト）などでコマンドで実行
 ```
 python test.py
 ```
+
+#### VSCode上のターミナルからでも実行可
+![image](https://gyazo.com/9a5e19c19d1f190bb438830f800f02f2.png)
+
 
 ### 大事な設定：TABはスペース4つを確認
 画面右下を確認
@@ -349,6 +355,11 @@ print(result)
 # Result:
 # 0
 ```
+
+### モーダルウィンドウの重要性
+ユーザーに必ず何かしらの情報を入力して欲しい際は、モーダルウィンドウとしてダイアログを表示する必要がある。
+
+![](https://i.gyazo.com/201f19745395042f09ea399c5ee7f48f.png)
 
 ### QDailogからの派生ダイアログ
 QDialogから派生する様々な種類のダイアログがあるようだ。
@@ -1427,3 +1438,6 @@ font = self.font_combobox.currentFont()
 - VSCodeで`jpynb`
     - なんと、JupyterNoteやJupyterLabのファイルはVSCode対応していて、普通に実行や編集が出来る。
     ![](https://i.gyazo.com/bf46de0ea8c982e7642c9c771e0a4358.png)
+
+## 関連：
+- [VFXのためのPySideまとめ](https://yamagishi-2bit.blogspot.com/2021/09/pyside.html)
