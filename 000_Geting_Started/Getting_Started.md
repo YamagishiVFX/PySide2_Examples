@@ -3,10 +3,14 @@ Updated: 2022/06/22 Tatsuya YAMAGISHI
 
 Created: 2022/06/21 Tatsuya YAMAGISHI
 
+## GitHub:
+- GitHub: [YamagishiVFX PySide Getting Started](https://github.com/YamagishiVFX/PySide2_Examples/tree/main/000_Geting_Started)
+
 ## 関連 & 参考：
 - [PySide2公式](https://doc.qt.io/qtforpython-5/index.html)
 - [PySide2公式 : Qt for Python Quick start](https://doc.qt.io/qtforpython-5/quickstart.html#project-quick-start)
 - [VFXのためのPySideまとめ](https://yamagishi-2bit.blogspot.com/2021/09/pyside.html)
+
 
 ## 概要：
 0. [始めに](#intro)
@@ -1220,45 +1224,7 @@ view.show()
 app.exec_()
 ```
 
-### Tips:Lambdaで定義も出来る
-無記名関数をスロットとして定義出来る。知っておくと何かの時に役立つテクニック。
-```Python
-import sys
 
-from PySide2.QtWidgets import (
-    QApplication, QPushButton, QLineEdit, QWidget, QVBoxLayout
-)
-
-# QDialogクラスを継承してカスタムクラスを作成
-class MyWidget(QWidget):
-    def __init__(self, parent=None):
-        super().__init__(parent)
-        
-        # メインレイアウト
-        self.main_layout = QVBoxLayout()
-        # Widgetにレイアウトをセット
-        self.setLayout(self.main_layout)
-
-
-        # ラベルを作成
-        self.line_edit = QLineEdit(self)
-        self.line_edit.textEdited.connect(lambda: print('Test'))
-        # レイアウトにボタンを追加
-        self.main_layout.addWidget(self.line_edit)
-
-
-        # ボタンを作成
-        self.button = QPushButton('Push', self)
-        self.main_layout.addWidget(self.button)
-
-        self.setWindowTitle('MyWidget')
-        
-app = QApplication(sys.argv)
-view = MyWidget()
-view.resize(300, 200)
-view.show()
-app.exec_()
-```
 
 ### ボタンが押されたらLineEidtをクリアするようにしてみた
 ```Python
@@ -1330,7 +1296,196 @@ view.show()
 app.exec_()
 ```
 
+### Tips:Lambdaで定義も出来る
+無記名関数をスロットとして定義出来る。知っておくと何かの時に役立つテクニック。
+```Python
+import sys
 
+from PySide2.QtWidgets import (
+    QApplication, QPushButton, QLineEdit, QWidget, QVBoxLayout
+)
+
+# QDialogクラスを継承してカスタムクラスを作成
+class MyWidget(QWidget):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        
+        # メインレイアウト
+        self.main_layout = QVBoxLayout()
+        # Widgetにレイアウトをセット
+        self.setLayout(self.main_layout)
+
+
+        # ラベルを作成
+        self.line_edit = QLineEdit(self)
+        self.line_edit.textEdited.connect(lambda: print('Test'))
+        # レイアウトにボタンを追加
+        self.main_layout.addWidget(self.line_edit)
+
+
+        # ボタンを作成
+        self.button = QPushButton('Push', self)
+        self.main_layout.addWidget(self.button)
+
+        self.setWindowTitle('MyWidget')
+        
+app = QApplication(sys.argv)
+view = MyWidget()
+view.resize(300, 200)
+view.show()
+app.exec_()
+```
+
+### Tips:Lambdaで引数を変えて関数をラップ - 失敗例
+- 変数 `name` が最後の評価になってしまい、出力が全部 `C`。
+- Python3で `lambda` の変更があったせいか？以前動いていたコードが上手く動作しなくなっている。
+
+上手く動作しない。
+```Python
+self.button_b.clicked.connect(lambda x=name: self.button_pressed(x))
+```
+
+```Python
+import sys
+
+from PySide2.QtWidgets import (
+    QApplication, QPushButton, QLineEdit, QWidget, QVBoxLayout
+)
+
+class MyWidget(QWidget):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        
+        # メインレイアウト
+        self.main_layout = QVBoxLayout()
+        # Widgetにレイアウトをセット
+        self.setLayout(self.main_layout)
+
+
+        # ボタンを作成
+        name = 'A'
+        self.button_a = QPushButton(name, self)
+        self.button_a.clicked.connect(lambda: self.button_pressed(name))
+        self.main_layout.addWidget(self.button_a)
+
+        name = 'B'
+        self.button_b = QPushButton(name, self)
+        self.button_b.clicked.connect(lambda: self.button_pressed(name))
+        self.main_layout.addWidget(self.button_b)
+
+        name = 'C'
+        self.button_c = QPushButton(name, self)
+        self.button_c.clicked.connect(lambda: self.button_pressed(name))
+        self.main_layout.addWidget(self.button_c)
+
+
+    def button_pressed(self, text):
+        print(f'Push {text}')
+        
+app = QApplication(sys.argv)
+view = MyWidget()
+view.resize(300, 200)
+view.show()
+app.exec_()
+```
+
+### functools.partial を使う方法があるらしい
+参考 : [Lambda or partial as slot](https://forum.qt.io/topic/121647/lambda-or-partial-as-slot)
+
+```Python
+import functools
+import sys
+
+from PySide2.QtWidgets import (
+    QApplication, QPushButton, QLineEdit, QWidget, QVBoxLayout
+)
+
+class MyWidget(QWidget):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        
+        # メインレイアウト
+        self.main_layout = QVBoxLayout()
+        # Widgetにレイアウトをセット
+        self.setLayout(self.main_layout)
+
+
+        # ボタンを作成
+        name = 'A'
+        self.button_a = QPushButton(name, self)
+        self.button_a.clicked.connect(
+                functools.partial(self.button_pressed, name)
+            )
+        self.main_layout.addWidget(self.button_a)
+
+        name = 'B'
+        self.button_b = QPushButton(name, self)
+        self.button_b.clicked.connect(
+                functools.partial(self.button_pressed, name)
+            )
+        self.main_layout.addWidget(self.button_b)
+
+        name = 'C'
+        self.button_c = QPushButton(name, self)
+        self.button_c.clicked.connect(
+                functools.partial(self.button_pressed, name)
+            )
+        self.main_layout.addWidget(self.button_c)
+
+
+    def button_pressed(self, text):
+        print(f'Push {text}')
+        
+app = QApplication(sys.argv)
+view = MyWidget()
+view.resize(300, 200)
+view.show()
+app.exec_()
+```
+
+### これにより、forループなどでボタンをまとめて作れたり
+- 推奨されるほうほうかどうか？は不明
+
+![image](https://i.gyazo.com/db285f2fe9ff3e0ffe507a4a7557b294.png)
+
+```Python
+import functools
+import sys
+
+from PySide2.QtWidgets import (
+    QApplication, QPushButton, QWidget, QVBoxLayout
+)
+
+class MyWidget(QWidget):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        
+        # メインレイアウト
+        self.main_layout = QVBoxLayout()
+        # Widgetにレイアウトをセット
+        self.setLayout(self.main_layout)
+
+
+        # ボタンを作成
+        button_name_list = ['A', 'B', 'C',]
+
+        for button_name in sorted(button_name_list):
+            button = QPushButton(button_name, self)
+            button.clicked.connect(
+                functools.partial(self.button_pressed, button_name)
+            )
+            self.main_layout.addWidget(button)
+
+
+    def button_pressed(self, text):
+        print(f'Push {text}')
+        
+app = QApplication(sys.argv)
+view = MyWidget()
+view.resize(300, 200)
+view.show()
+app.exec_()
+```
 
 <a id="gui"></a>
 
