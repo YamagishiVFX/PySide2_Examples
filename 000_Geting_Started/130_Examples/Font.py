@@ -22,6 +22,7 @@ class MyWidget(QWidget):
         font = QFont('Arial Black')
         # font.setFamily('Arial Black')
         font.setPointSize(15)
+        font.setBold(True)
         font.setItalic(True)
 
 
