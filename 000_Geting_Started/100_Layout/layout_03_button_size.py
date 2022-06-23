@@ -32,8 +32,10 @@ class MyWidget(QWidget):
         self.button_2.setMaximumWidth(100)
         self.main_layout.addWidget(self.button_2)
 
+
         self.setWindowTitle('MyWidget')
-        self.resize(300, 200)
+        # ウィンドウサイズを固定したい場合。
+        self.setFixedSize(300, 200)
 
 app = QApplication(sys.argv)
 view = MyWidget()

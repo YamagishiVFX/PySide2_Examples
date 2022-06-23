@@ -1,8 +1,8 @@
 # PySide2 : Getting Started
-`Pythonなどプログラムがちょっと分かる` 人が新たにPySide2を始めようとした際に参考になりそうな内容をまとめた。
+`Pythonなどプログラムがちょっと分かる人` が新たにPySide2を始めようとした際に参考になりそうな感じでまとめてみた。
 
 
-Updated: 2022/06/22 Tatsuya YAMAGISHI
+Updated: 2022/06/23 Tatsuya YAMAGISHI
 
 Created: 2022/06/21 Tatsuya YAMAGISHI
 
@@ -10,6 +10,7 @@ Created: 2022/06/21 Tatsuya YAMAGISHI
 - GitHub: [YamagishiVFX PySide Getting Started](https://github.com/YamagishiVFX/PySide2_Examples/blob/main/000_Geting_Started/Getting_Started.md)
 
 ## 関連 & 参考：
+- [Qt5公式](https://doc.qt.io/qt-5.15/)
 - [PySide2公式](https://doc.qt.io/qtforpython-5/index.html)
 - [PySide2公式 : Qt for Python Quick start](https://doc.qt.io/qtforpython-5/quickstart.html#project-quick-start)
 - [VFXのためのPySideまとめ](https://yamagishi-2bit.blogspot.com/2021/09/pyside.html)
@@ -20,13 +21,13 @@ Created: 2022/06/21 Tatsuya YAMAGISHI
 1. [Python3のインストール:](#install_python)
 2. [PySide2インストール:](#install_pyside2)
 3. [開発環境:](#develop)
-4. [Qアプリケーションの作成:](#qaplication)
-5. [Import PySide2:](#import)
+4. [Import PySide2:](#import)
+5. [Qアプリケーションの作成:](#qaplication)
 6. [GUIの作成:QtDesigner](#qtdesigner)
 7. [Windowの作成:](#window)
    1. [QDialog](#qdialog)
-   1. [QMainWIndow](#qmainwindow)
-   1. [QWidet](#qwidget)
+   2. [QMainWIndow](#qmainwindow)
+   3. [QWidet](#qwidget)
 8. [Widgetのカスタマイズ基本:](#customize_basic)
 9. [Widgetのカスタマイズ:](#customize)
 10. [QLayout:](#qlayout)
@@ -51,16 +52,28 @@ Created: 2022/06/21 Tatsuya YAMAGISHI
 # 1. Python3のインストール
 Pythonのインストールに関しては色々解説があると思うのでここでは割愛。
 
-### VFX用途のPythonのバージョンについて
-- **3.9系：** : 2022/06/21現在のお勧め。VFX搭載のPythonは3.7系が多い印象なので注意が必要。
-- **3.7系：** : 主要ツールが3.7系なので **互換を意識したい場合はおすすめ** 。 
-  - 3.7以降追加された関数を使わなければ 3.9で問題ないと思われる。
-- **Python2系の選択は論外** : サポート終了、PySide2がPython2.7で動かないなど
-- **3.10系** ：CY2023 Draftに Python3.10 の文字があるため、将来性を意識したい場合。
-  - [VFX Reference Platform](https://vfxplatform.com/)
-
 ### 参考：
 - [Pythonのバージョンを確認、表示（sys.versionなど）](https://note.nkmk.me/python-sys-platform-version-info/)
+  
+### VFX用途のPythonのバージョンについて
+2022/06/21現在
+
+- **3.9系：** お勧め。VFX搭載のPythonは3.7系が多い印象なので注意が必要。
+- **3.7系：** 主要ツールが3.7系なので **互換を意識したい場合はおすすめ** 。 
+  - 3.7以降追加された関数を使わなければ 3.9で問題ないと思われる。
+- **3.10系** CY2023 Draftに Python3.10 の文字があるため、将来性を意識したい場合。
+  - [VFX Reference Platform](https://vfxplatform.com/)
+- **Python2系の選択は論外**  サポート終了、PySide2がPython2.7で動かないなど
+
+### VFXツールのPythonについて
+- Maya、Nuke、Houdini、3dsMaxは標準でPython、PySideが組み込まれているためインストールは不要。OSで実行したい際はOSにPythonのインストールをする必要がある。また、Python3が使えるクライアントバージョンを選択。Nukeだと13.0以降など。
+
+
+### Pythonには対応しているがPySideに対応していないツール
+- Pythonに対応していればPySideを動かせる場合がある。
+  - 関連： [BlenderでPySide2のツールを動かすまで](https://yamagishi-2bit.blogspot.com/2021/05/blender-blenderpyside-pyside.html)
+- Cinema4dでPySideのツールを動かすのはとても困難な印象。
+  - ShotGridの[tk-cinema](https://github.com/mikedatsik/tk-cinema)で実現しるようだが、WindowsだとCinema4d用のPySide2のビルドを準備する必要があったり、とても敷居が高く感じた。Cinema4dのPythonが c++ APIのラッパーでスクリプトの難易度がとても高いという背景などもある。
 
 
 <a id="install_pyside2"></a>
@@ -125,7 +138,7 @@ pip list -o
 
 # 3. 開発環境
 ### VSCodeのインストール
-- コードエディタとしてVSCodeをインストール
+- コードエディタとして `VSCode` をインストール
 - MayaなどのVFXツールは `簡易コードエディタ` を搭載してるためVFXツールで開発する場合は必ず準備する必要はない。
   - VSCodeなどの高機能エディタは `スペルミス` や `補完機能` など便利な機能が沢山あるため `VSCode` などの高機能エディタの使用を推奨。これに慣れてしまうと普通のドキュメント作成もVSCodeが手放せなくなってくる・・・。
 
@@ -141,6 +154,14 @@ pip list -o
 ![](https://i.gyazo.com/a12b8c984f90b87ef7421532434f1109.png)
 
 
+### 大事な設定：TABはスペース4つを確認
+画面右下を確認
+
+![](https://i.gyazo.com/34de041a17d1adf071e27f8df55dd94e.png)
+
+関連：[全ツール共通のスクリプトエディタの設定：インデントはスペース4つ](https://yamagishi-2bit.blogspot.com/2021/05/vfxpython.html)
+
+
 ### Pythonスクリプトの実行
 - プログラムを書いて `test.py` などで保存
 - CTRL+F5 の `Run Without Debugging` で プログラムを評価
@@ -149,25 +170,19 @@ pip list -o
 ![](https://i.gyazo.com/47e4c22b22258078972e2d57dd49afaf.jpg)
 
 
-#### ターミナル（コマンドプロンプト）などでコマンドで実行
+### ターミナル（コマンドプロンプト）などでコマンドで実行
 ```
 python test.py
 ```
 
-#### VSCode上のターミナルからでも実行可
+### VSCode上のターミナルからでも実行可
 ![image](https://gyazo.com/9a5e19c19d1f190bb438830f800f02f2.png)
 
 
-### 大事な設定：TABはスペース4つを確認
-画面右下を確認
-
-![](https://i.gyazo.com/34de041a17d1adf071e27f8df55dd94e.png)
-
-関連：[全ツール共通のスクリプトエディタの設定：インデントはスペース4つ](https://yamagishi-2bit.blogspot.com/2021/05/vfxpython.html)
 
 ### VSCode便利な操作
 - [参考：VS Code の便利なショートカットキー](https://qiita.com/12345/items/64f4372fbca041e949d0)
-- 記事を書いている環境が `英語キーボード` 環境であるため、日本語キーボードとショートカットが異なる場合あり。
+- 記事を書いている環境が `英語キーボード` 環境であるため、日本語キーボードとショートカットが異なる可能性あり。
   
 | ショートカット | 説明 |
 | ---- | ---- |
@@ -180,86 +195,14 @@ python test.py
 | Alt + PgUp/PgDn | カーソル位置を変えずにスクロール | 
 
 
-
-
-
-
-<a id="qaplication"></a>
-
-# 4. Qアプリケーション作成
-
-アプリケーション作成最小コード
-
-![](https://i.gyazo.com/9fe7fe6fe3f9385c9dffc2d03c15038a.png)
-```Python
-import sys
-
-from PySide2.QtWidgets import QApplication, QWidget
-
-# Qアプリケーション作成
-app = QApplication(sys.argv)
-
-# ウィジェットオブジェクト作成
-window = QWidget()
-
-# ウィジェットの表示
-window.show()
-
-# アプリケーションメインループ開始
-app.exec_()
-```
-
-### 注1：QAplicationは一番最初に必ず作らないとならない
-![image](https://i.gyazo.com/9d87fbcd0015771c9c0061dcbb0cb981.png)
-
-- Widgetなどのオブジェクトが作れない。
-```
-> QWidget: Must construct a QApplication before a QWidget
-```
-
-### 注2：QtでGUIが作成されているVFXツールの場合
-一般の環境ではあまりないかもしれないが、MayaなどのVFXツールはQtでアプリケーションが作られている事があり、ツール起動時に `QAplication` が作成されているらしく、`QAplication` を作ろうとするとエラーを返す。
-
-**先ほどのコードの実行結果：**
-```
-# Result
-# Error: RuntimeError: file <maya console> line 8: A QApplication instance already exists. 
-```
-
-Qtベースのツール上でのPySideはアプリケーションの処理を定義せずに実行する。
-![image](https://i.gyazo.com/12c9f68e67d9fd7c5800d7c776f4be0d.png)
-
-### PySide2が使えるVFXツールにおけるウィジェットの表示
-```Python
-import sys
-
-from PySide2.QtWidgets import QWidget
-
-# ウィジェットオブジェクト作成
-window = QWidget()
-
-# ウィジェットの表示
-window.show()
-```
-- Nuke
-- Houdini
-- 3dsMax
-
-などが同じコードでウィンドウを表示出来る。
-
-
-
-
-
 <a id="import"></a>
 
-# 5. Import PySide2
-- [関連：import PySide](https://yamagishi-2bit.blogspot.com/2021/11/pyside2-import-pyside-vfx.html)
-  - ここでは以下の方式を使用。
-  - いくつかimportの方式があり、それぞれメリットデミリットがあるように思えるが、僕個人は `最適` を提案出来るほど知識を有していない。
+# 4. Import PySide2
+**関連：**[import PySide](https://yamagishi-2bit.blogspot.com/2021/11/pyside2-import-pyside-vfx.html)
+- いくつかimportの方式があり、それぞれメリットデミリットがあるように思える。僕個人は `最適` を提案出来るほど知識を有していない。
 - `PySide2.QtWidgets` に様々な種類のウィジェットが入っている。
 
-Impoert Example:
+Example1:
 ```Python
 from PySide2.QtCore import (
     QPoint, QRect, QSize, QTime, QUrl, Qt
@@ -288,13 +231,87 @@ print(PySide2.__version__)
 # Prints the Qt version used to compile PySide2
 print(PySide2.QtCore.__version__)
 ```
-Result：表示されるバージョンはPySideのバージョン問よりはCoreとなっているQtのバージョンのようだ。
+Result：表示はCoreとなっているQtのバージョンのようだ。
 ```
 5.15.0
 5.15.0
 ```
 
 <a id="qtdesigner"></a>
+
+
+
+<a id="qaplication"></a>
+
+# 5. Qアプリケーション作成
+
+アプリケーション作成最小コード
+
+![](https://i.gyazo.com/9fe7fe6fe3f9385c9dffc2d03c15038a.png)
+```Python
+import sys
+
+from PySide2.QtWidgets import QApplication, QWidget
+
+# Qアプリケーション作成
+app = QApplication(sys.argv)
+
+# ウィジェットオブジェクト作成
+window = QWidget()
+
+# ウィジェットの表示
+window.show()
+
+# アプリケーションメインループ開始
+app.exec_()
+```
+
+### 注1：QAplicationは一番最初に必ず作らないとならない
+![image](https://i.gyazo.com/9d87fbcd0015771c9c0061dcbb0cb981.png)
+
+**Widgetオブジェクトが作れない。**
+```
+> QWidget: Must construct a QApplication before a QWidget
+```
+
+### 注2：QtでGUIが作成されているVFXツールの場合
+一般の環境ではあまりないかもしれないが、MayaなどのVFXツールはQtでアプリケーションが作られている事があり、ツール起動時に `QAplication` が作成されているらしく、`QAplication` を作ろうとするとエラーを返す。
+
+**先ほどのコードの実行結果：**
+```
+# Result
+# Error: RuntimeError: file <maya console> line 8: A QApplication instance already exists. 
+```
+
+Qtベースのツール上でのPySideはアプリケーションの処理を定義せずに実行する。
+```Python
+app = QApplication(sys.argv)
+app.exec_()
+```
+を省略
+
+### PySide2が使えるVFXツールにおけるウィジェットの表示
+- Maya
+- Nuke
+- Houdini
+- 3dsMax
+
+などが同じコードでウィンドウを作成出来る。
+
+![image](https://i.gyazo.com/12c9f68e67d9fd7c5800d7c776f4be0d.png)
+
+```Python
+import sys
+
+from PySide2.QtWidgets import QWidget
+
+# ウィジェットオブジェクト作成
+window = QWidget()
+
+# ウィジェットの表示
+window.show()
+```
+
 
 # 6.GUIのデザイン：QtDesigner
 ここではプログラムコード主体で進めていくが、GUIのデザインは `QtDesigner` を使うと楽。
@@ -317,8 +334,9 @@ PySide2で準備されているWindow用のウィジェットは
 
 の２つ
 
-- `QWidget` は定義の仕方でWindowとしてもパーツとしても振舞う
-- `QDialog`, `QMainWindow` は parent を 設定すると、親画面の手前に常にWindowが表示されるようになる。「VFXツールのメイン画面の手前に常に表示させる方法」はこの辺の仕様によるものらしい。
+- `QWidget` は `parent` の有無でWindowとしてもパーツとしても振舞う。
+- `QDialog`, `QMainWindow` は `parent` を 設定すると、親画面の手前に常にWindowが表示されるようになる。
+- 「VFXツールのメイン画面の手前に常に表示させる方法」はこの辺の仕様によるものらしい。
   - 関連：[VFXツールの各PySideGUI導入調べた](https://yamagishi-2bit.blogspot.com/2021/07/pyside-pysidegui-python.html)
 
 ---
@@ -422,7 +440,7 @@ QDialogから派生する様々な種類のダイアログがあるようだ。
 <a id="qmainwindow"></a>
 
 ### 7.2QMainWindow
-先ほどのQWidgetと表示は全く同じだが、QMainWindowはメニューバーやステータスバーを使えるようだ。
+先ほどの `QDialog` と表示は全く同じだが、`QMainWindow` は `メニューバー` や `ステータスバー` を使えるようだ。
 
 ![](https://i.gyazo.com/0aae8bd03f9657f2734c4e8fb4d067e2.png)
 
@@ -514,8 +532,13 @@ statusbar = window.statusBar()
 statusbar = QStatusBar(window)
 window.setStatusBar(statusbar)
 statusbar.showMessage('Status Bar') 
-# statusbar.showMessage('Status Bar', 5000) # timeout: int=0 (ms)
+# メッセージの表示時間。timeout: int=0 (ms)
+# statusbar.showMessage('Status Bar', 5000) 
 
+
+#--------------------------#
+# ウィンドウ作成
+#--------------------------#
 # ウィンドウタイトルを変更
 window.setWindowTitle('Main Window')
 
@@ -539,14 +562,14 @@ app.exec_()
   - parentを指定しないと `Window` として起動
   - parentを指定すると `パーツ(Widget)` として配置
 - **PySideでは `parent` を意識する事はとても大事**
-
+- Mayaなどで `QDialog` や `QMainWindow` 以外の Window用ではないWidget にMayaのメイン画面を parent すると Mayaのメイン画面に配置されてしまう場合がある。
 
 引用：PySide2 QWidget
 - `QMainWindow` や `QDialog` も `QWidget`　の派生クラスである事が分かる。
 
 ![](https://i.gyazo.com/5933fec47f762bf1ed072e628cf320b9.png)
 
-Example:
+**Example1: QWidgetをWindowで表示**
 
 ![image](https://i.gyazo.com/c75f1fe1b0a38f4f5444fd3236542086.png)
 
@@ -609,17 +632,49 @@ view.show()
 app.exec_()
 ```
 
+**Example3 : 般的なWidgetにMayaのメイン画面をparentしてみた場合**
+![iamge](https://i.gyazo.com/85ea333f015ab2a69948d20d0aa41ebd.jpg)
+
+```Python
+import sys
+
+from PySide2.QtWidgets import (
+    QApplication,
+    QPushButton,
+    QWidget
+)
+
+
+from maya import OpenMayaUI as omui 
+from shiboken2 import wrapInstance
+
+# Mayaのメインウィンドウ取得
+maya_main_window_ptr = omui.MQtUtil.mainWindow()
+maya_main_window = wrapInstance(int(maya_main_window_ptr), QWidget) 
+
+# QPushButtonを作成
+view = QPushButton('Push')
+
+# ウィンドウサイズの変更
+view.resize(300, 200)
+
+# Mayaのメインウィンドウをparentにセット
+view.setParent(maya_main_window)
+
+# ウィジェットの表示
+view.show()
+```
+
 
 
 <a id="customize_basic"></a>
 
 # 8. Widgetのカスタマイズ基本
-- `QDialog`、`QMainWinodw` を始め様々なWidgetがあるが、`QWidget` から派生しているため、基本的な挙動はWidgetでも同じ。
 
 ### 基本形
-- 特定のWidgetのクラスを継承し拡張するやり方が基本
+- 特定の `Widgetのクラス` を継承し拡張するやり方が基本
 
-Example: QWidgetのカスタマイズ
+Example: QWidgetクラスのカスタマイズ
 
 ![image](https://i.gyazo.com/416864341facd0c3b376ae18aa2be73f.png)
 
@@ -660,7 +715,7 @@ app.exec_()
 
 ### Widgetの設定をクラス内に移動
 - 処理する場所をクラス内に移しただけ。結果は同じ。どこが最適か？は実装によって異なってくると思う。
-- Widgetに使える関数は「[公式リファレンス:QWidget](https://doc.qt.io/qtforpython-5/PySide2/QtWidgets/QWidget.html)」などを参照
+- Widgetで使える関数は「[公式リファレンス:QWidget](https://doc.qt.io/qtforpython-5/PySide2/QtWidgets/QWidget.html)」などを参照
 - 派生したクラスでさらに関数が拡張され、使える関数は滅茶苦茶沢山ある。
 
 ![image](https://i.gyazo.com/416864341facd0c3b376ae18aa2be73f.png)
@@ -692,7 +747,7 @@ app.exec_()
 ```
 
 ### 基本的にはどのクラスを継承しても構文は同じ
-Example : QDialogにした場合
+Example : QDialogの場合
 
 ![image](https://i.gyazo.com/416864341facd0c3b376ae18aa2be73f.png)
 
@@ -767,7 +822,7 @@ app.exec_()
 - `QWidget` は `QDialog` や `QMainWindow` のように、**用途が明確では無い**ので必要に応じて拡張が出来る。
 
 ### QWidgetを拡張してボタンを配置してみる。
-ボタンオブジェクトを配置したが、何も表示されない。
+ボタンオブジェクトを作成してみたが、何も表示されない。
 
 ![image](https://i.gyazo.com/2799dfec90067f4eaaaa9246ede405bd.png)
 
@@ -796,16 +851,17 @@ app.exec_()****
 ```
 
 ### widgetはparentをしていしないとWindow。parentを指定するとパーツ。
-`QPushButton.show()` をするとButtonも別Windowとして表示される。`QPushButton` など Widgetは `QWidget` の派生クラスなので、基本的に **`QWidget`の特徴を継承** しているようだ。
+`QPushButton.show()` をするとButtonも別Windowとして表示される。`QPushButton` などの 多くのWidgetは `QWidget` の派生クラスなので、基本的に **`QWidget`の特徴を継承** しているようだ。
 
 ![image](https://i.gyazo.com/2d74dacf2e7ca185eeb54bbaa903e27c.png)
 
 
 ### parentを指定してみる
-[PySide2 : QPushButtonのリファレンス](https://doc.qt.io/qtforpython-5/PySide2/QtWidgets/QPushButton.html) を見てみると最後の引数がparentのようだ。
+[PySide2 : QPushButtonのリファレンス](https://doc.qt.io/qtforpython-5/PySide2/QtWidgets/QPushButton.html) を見てみると最後の引数が `parent` のようだ。
 ![image](https://i.gyazo.com/9afdd20d353519ab543dc59d9acc438e.png)
 
-`parent` としてベースのQWidgetを指定してみる。今度はWidget内にパーツとして配置された。
+`parent` としてベースのQWidgetを指定してみる。今度はWidget内にパーツとして配置された。殆どの**Widgetはオブジェクト作成の際の最後の引数が `parent` となっている**ようだ。
+
 ![image](https://i.gyazo.com/89fc50a452127d7c963d206cd7179110.png)
 
 
@@ -823,7 +879,7 @@ QtDesignerなら、レイアウトを簡単に出来るが・・・
 <a id="qlayout"></a>
 
 # 10.QLayout
-数値でレイアウトしていくのは大変なので、PySideでのWidgetのレイアウトは基本的に `QLayout` を使って行っていく。
+数値でレイアウトするのは大変なので、PySideでのWidgetのレイアウトは基本的に `QLayout` を使う。
 
 QLayoutは
 
@@ -839,11 +895,11 @@ QtDesignerだと図の部分
 ![](https://i.gyazo.com/64ea713fd81b1a829056ea52327fcd3f.png)
 
 
-### Example
+**Example: QLayout**
 
 ![image](https://i.gyazo.com/2e89fe2e0f0e42ee1208215b5f44d42b.png)
 
-`QWidget.layout()` というWidgetのメインレイアウト取得用の関数があるため、変数名に注意。
+`QWidget.layout()` というWidgetのメインレイアウト取得用の関数があるため、アトリビュート名の重複に注意。
 
 ```Python
 import sys
@@ -852,7 +908,7 @@ from PySide2.QtWidgets import (
     QApplication, QPushButton, QWidget, QVBoxLayout
 )
 
-# QDialogクラスを継承してカスタムクラスを作成
+# QWidgetクラスを継承してカスタムクラスを作成
 class MyWidget(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -862,7 +918,7 @@ class MyWidget(QWidget):
         """
 
         # 縦レイアウトを作成
-        self.main_layout = QVBoxLayout()
+        self.main_layout = QVBoxLayout(self)
         # Widgetにレイアウトをセット
         self.setLayout(self.main_layout)
 
@@ -947,7 +1003,9 @@ class MyWidget(QWidget):
         self.main_layout.addWidget(self.button_2)
 
         self.setWindowTitle('MyWidget')
-        self.resize(300, 200)
+
+        # ウィンドウサイズを固定したい場合。
+        self.setFixedSize(300, 200)
 
 app = QApplication(sys.argv)
 view = MyWidget()
@@ -1112,7 +1170,7 @@ app.exec_()
 
 とても大きな違いがあるようだ。ここでは `textEdit` を使ってみる。
 
-### シグナルの接続と接続先の関数を準備する。
+### シグナルの接続と接続先の関数（スロット）を準備する。
 
 文字を入力する度にコンソールに関数の実行結果が表示される。
 
@@ -1137,8 +1195,9 @@ class MyWidget(QWidget):
         self.setLayout(self.main_layout)
 
 
-        # ラベルを作成
+        # ラインエディットを作成
         self.line_edit = QLineEdit(self)
+        # ラインエディットの文字を編集した際のシグナルを定義
         self.line_edit.textEdited.connect(self.line_edit_edited)
         # レイアウトにボタンを追加
         self.main_layout.addWidget(self.line_edit)
@@ -1150,6 +1209,7 @@ class MyWidget(QWidget):
 
         self.setWindowTitle('MyWidget')
 
+    # ラインエディットの文字を編集した際に呼び出される関数
     def line_edit_edited(self):
         print('Test')
         
@@ -1161,13 +1221,13 @@ app.exec_()
 ```
 
 ### シグナルのconnect先は関数を指定する
-PySideの用語でsignalの接続先は `Slot（スロット）` と呼ばれるようだ。
+PySideの用語で `Signal（シグナル）` の接続先は `Slot（スロット）` と呼ばれるようだ。
 
 ![image](https://i.gyazo.com/48ec67c13608cd0bd6f873a7c0c3e651.png)
 
 
 ### 関数の実行結果ではなく、関数そのものを引数にする。
-最初少し困惑したが、Pythonの仕様で関数そのものを代入出来る。
+最初少し困惑したがPythonは変数などに関数そのものを受け取る事が出来る。
 - `関数名()` で関数の実行結果
 - `関数名` で関数そのもの
 
@@ -1234,7 +1294,6 @@ class MyWidget(QWidget):
         print(arg)
 
         
-        
 app = QApplication(sys.argv)
 view = MyWidget()
 view.resize(300, 200)
@@ -1277,7 +1336,7 @@ class MyWidget(QWidget):
             * QPushButton.clicked
             * QPushButton.pressed
         というボタンを押した系のシグナルがある。
-        クリックと右クリックのみの違いだったようだ
+        `クリック` と `右クリックのみ` の違いのようだ
         """
         self.button = QPushButton('Push', self)
         self.button.clicked.connect(self.button_clicked)
@@ -1285,7 +1344,7 @@ class MyWidget(QWidget):
 
         self.setWindowTitle('MyWidget')
 
-    # シグナルの接続先関数
+    # ラインエディットを編集した際にのスロット
     def line_edit_edited(self, arg):
         """ line_edit.textEdited
 
@@ -1314,8 +1373,9 @@ view.show()
 app.exec_()
 ```
 
-### Tips:Lambdaで定義も出来る
+### Tips:Lambdaでもスロットを定義出来る
 無記名関数をスロットとして定義出来る。知っておくと何かの時に役立つテクニック。
+- 繰り返しになるが、signalの接続は関数の実行結果ではなく関数そのもの。
 ```Python
 import sys
 
@@ -1356,7 +1416,7 @@ app.exec_()
 
 ### Tips:Lambdaで引数を変えて関数をラップ - 失敗例
 - 変数 `name` が最後の評価になってしまい、全部の出力が　`C`。
-- Python3で `lambda` の変更があったせいか？以前動いていたコードが上手く動作しなくなっている。
+- Python3で `lambda` の仕様の変更があった影響か？以前動いていたコードが上手く動作しなくなっている。
 
 以前の対応例：現在は上手く動作しない
 ```Python
@@ -1408,7 +1468,62 @@ view.show()
 app.exec_()
 ```
 
-### functools.partial を使う方法があるらしい
+### Tips : 望んだ動作をするLambda式の書き方
+```Python
+lambda func=self.button_pressed, value=name: func(value)
+```
+Examples:
+```Python
+import sys
+
+from PySide2.QtWidgets import (
+    QApplication, QPushButton, QLineEdit, QWidget, QVBoxLayout
+)
+
+class MyWidget(QWidget):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        
+        # メインレイアウト
+        self.main_layout = QVBoxLayout()
+        # Widgetにレイアウトをセット
+        self.setLayout(self.main_layout)
+
+
+        # ボタンを作成
+        name = 'A'
+        self.button_a = QPushButton(name, self)
+        self.button_a.clicked.connect(
+                lambda func=self.button_pressed, value=name: func(value)
+            )
+        self.main_layout.addWidget(self.button_a)
+
+        name = 'B'
+        self.button_b = QPushButton(name, self)
+        self.button_b.clicked.connect(
+                lambda func=self.button_pressed, value=name: func(value)
+            )
+        self.main_layout.addWidget(self.button_b)
+
+        name = 'C'
+        self.button_c = QPushButton(name, self)
+        self.button_c.clicked.connect(
+                lambda func=self.button_pressed, value=name: func(value)
+            )
+        self.main_layout.addWidget(self.button_c)
+
+
+    def button_pressed(self, text):
+        print(f'Push {text}')
+        
+app = QApplication(sys.argv)
+view = MyWidget()
+view.resize(300, 200)
+view.show()
+app.exec_()
+```
+
+### Tips : functools.partial を使う方法もあるらしい
 参考 : [Lambda or partial as slot](https://forum.qt.io/topic/121647/lambda-or-partial-as-slot)
 
 ```Python
@@ -1462,8 +1577,9 @@ view.show()
 app.exec_()
 ```
 
-### これにより、forループなどでボタンをまとめて作れたり
+### forループなどでボタンを作ってみたり
 - 推奨されるほうほうかどうか？は不明
+- Lambda式でも問題なし
 
 ![image](https://i.gyazo.com/db285f2fe9ff3e0ffe507a4a7557b294.png)
 
@@ -1509,45 +1625,24 @@ app.exec_()
 <a id="gui"></a>
 
 # 作成したWidgetをDialogやMainWindowに配置
-- PySideの仕様上 `QWidget`、`QDalog`,`QMainWindow` は同じようにも使える。
+- `QWidget`、`QDalog`、`QMainWindow` は `QWidget` が元なので同じようにも使う事も出来る。
 - `QWidgetクラス` は汎用性が高い。
 - `QDialog` や `QMainWindow` は用途が明確。
-- **用途を限定** したくない場合はGUIのデザインは `QWidget` を基本にしておくと便利。
+  - **QDialog :** 常にWindow。ダイアログとしての機能を拡張できる。
+  - **QMainWindow :** 常にWindow。メニューバーやステータスバーを使える。
+- **用途を限定したくない** 場合はGUIのデザインは `QWidget` を基本にしておくと便利。
 
 
 ### 基底クラスを変更する
 - 先ほどのコードの基底クラスを `QDialog` や `QMainWinodw`に書き換えても全く同じようにWindowを表示出来る。
 
-Example: 基底クラスを`QDialog`に変更した場合
-
 ![image](https://gyazo.com/c9db1b240a5a0d8a97f0daf1651bd06b.png)
 
+Example: 基底クラスを`QDialog`に変更した場合
 
-```Python
-import sys
+赤線の部分のみ変更した。
 
-from PySide2.QtWidgets import (
-    QApplication, QDialog,
-    QPushButton, QLineEdit, QVBoxLayout
-)
-
-# QDialogクラスを継承してカスタムクラスを作成
-class MyWidget(QDialog):
-    def __init__(self, parent=None):
-        super().__init__(parent)
-        
-        # メインレイアウト
-        self.main_layout = QVBoxLayout()
-        # Widgetにレイアウトをセット
-        self.setLayout(self.main_layout)
-・・・
-略
-・・・
-app = QApplication(sys.argv)
-widget = MyWidget()
-widget.show()
-app.exec_()
-```
+![image](https://i.gyazo.com/4e71cd71766ea709f5d9cdbafab05873.png)
 
 
 ### ダイアログに配置して表示
@@ -1563,11 +1658,15 @@ from PySide2.QtWidgets import (
     QPushButton, QLineEdit, QWidget, QVBoxLayout
 )
 
-# QDialogクラスを継承してカスタムクラスを作成
+# QWidgetクラスを継承してカスタムクラスを作成
 class MyWidget(QWidget):
-    ・・・・
-    <省略>
-    ・・・・
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        
+        ・・・
+        ＜略＞
+        ・・・
+
 
 class MyDialog(QDialog):
     def __init__(self, parent=None):
@@ -1581,6 +1680,7 @@ class MyDialog(QDialog):
 
         self.setWindowTitle(self.__class__.__name__)
         self.resize(300, 200)
+
 
 app = QApplication(sys.argv)
 dialog = MyDialog()
@@ -1649,7 +1749,7 @@ result = dialog.exec_()
 ----
 
 ### メインウィンドウとして表示
-QMainWindowのメインとなるエリアは `CentralWidget` と呼ばれる。何かエヴァっぽいすね。
+QMainWindowのメインとなるエリアは `CentralWidget` と呼ばれる。何かエヴァっぽくてかっこいいすね。
 
 ![image](https://i.gyazo.com/df9290b8388021fefe257c502ea5ca38.png)
 
@@ -1766,6 +1866,141 @@ style_sheet = 'QLabel { color : red;}'
 # QLabel作成
 self.label = QLabel('Test')
 self.label.setStyleSheet(style_sheet)
+```
+
+### Widgetの背景を透明に
+
+![](https://i.gyazo.com/491a787cb0318afbd972f1a2a735fd0c.png)
+
+```Python
+self.status = QtWidgets.QLabel('Status : -')
+self.status.setAttribute(QtCore.Qt.WA_TranslucentBackground)
+```
+
+### QListWidget
+![image](https://i.gyazo.com/0b880e6a3f84e59f12dcbd57e72be14b.png)
+
+```Python
+import sys
+
+from PySide2.QtWidgets import (
+    QApplication, QDialog, QListWidget,
+    QPushButton, QVBoxLayout,
+)
+
+ITEMS = ['CharaA', 'CharaB', 'CharaC', 'CharaD',]
+
+class MyWidget(QDialog):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        
+        self.main_layout = QVBoxLayout(self)
+        self.main_layout.setContentsMargins(0, 0, 0, 0)
+
+        # ボタン作成
+        self.button = QPushButton('Clear')
+
+        # ListWidget作成
+        self.list = QListWidget()
+        # Item追加
+        self.list.addItems(ITEMS)
+        # ソート機能
+        self.list.setSortingEnabled(True)
+        # 各行で色変更
+        self.list.setAlternatingRowColors(True)
+
+
+        # シグナル設定
+        self.list.itemClicked.connect(self.list_activated)
+        self.button.clicked.connect(self.button_clicked)
+
+        # レイアウト
+        self.main_layout.addWidget(self.button)
+        self.main_layout.addWidget(self.list)
+
+
+    def list_activated(self, item):
+        if item:
+            print(item.text())
+
+
+    def button_clicked(self):
+        self.list.clear()
+
+if __name__ == '__main__':
+    app = QApplication(sys.argv)
+    view = MyWidget()
+    view.resize(150, 200)
+    view.show()
+    app.exec_()
+```
+
+### QSplitter
+![image](https://i.gyazo.com/9c8fbdfa9dbd7abd2f36f348bb4dfe34.png)
+```Python
+import sys
+
+from PySide2.QtCore import Qt
+
+from PySide2.QtWidgets import (
+    QApplication, QDialog, QListWidget,
+    QPushButton, QSplitter, QWidget, QVBoxLayout,
+)
+
+class MyWidget(QDialog):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        
+        # メインレイアウト
+        self.main_layout = QVBoxLayout(self)
+        # レイアウトの周囲の余白を無しに
+        self.main_layout.setContentsMargins(0, 0, 0, 0)
+
+
+        # スプリッター作成/水平分割
+        self.splitter = QSplitter()
+        self.splitter.setOrientation(Qt.Horizontal)
+
+
+        # 左側用ウィジェット
+        self.widget_1 = QListWidget()
+
+
+        # 右側用ウィジェット
+        self.widget_2 = QWidget()
+        self.layout_2 = QVBoxLayout(self.widget_2)
+
+        self.button_1 = QPushButton('Button 1')
+        self.button_2 = QPushButton('Button 2')
+        self.button_3 = QPushButton('Button 3')
+
+
+        # ウィジェットセット
+        self.layout_2.addWidget(self.button_1)
+        self.layout_2.addWidget(self.button_2)
+        self.layout_2.addWidget(self.button_3)
+
+        self.splitter.addWidget(self.widget_1)
+        self.splitter.addWidget(self.widget_2)
+        self.splitter.setSizes([244, 151])
+        self.main_layout.addWidget(self.splitter)
+
+
+        # シグナル
+        self.splitter.splitterMoved.connect(
+            lambda: self.splitter_moved(self.splitter))
+
+
+    def splitter_moved(self, splitter):
+        print(splitter.sizes())
+
+
+if __name__ == '__main__':
+    app = QApplication(sys.argv)
+    view = MyWidget()
+    view.resize(400, 200)
+    view.show()
+    app.exec_()
 ```
 
 
