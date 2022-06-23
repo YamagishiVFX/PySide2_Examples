@@ -148,7 +148,7 @@ pip list -o
 
 
 ### Python拡張をインストール
-- 言語は `日本語` に設定して問題ないと思う。日本語使うと挙動がおかしくなる貧弱なVFXとは出来が違う。
+- 言語は `日本語` に設定して問題ないと思う。日本語使うと挙動がおかしくなる貧弱なVFXツールとは出来が違う。
 - 左のツールバーのエクステンションなどから **Python拡張をインストール**
 
 ![](https://i.gyazo.com/a12b8c984f90b87ef7421532434f1109.png)
@@ -1986,7 +1986,15 @@ class MyWidget(QDialog):
         self.splitter.setSizes([244, 151])
         self.main_layout.addWidget(self.splitter)
 
+    """ 
+    lambda使わない場合
+        # シグナル
+        self.splitter.splitterMoved.connect(self.splitter_moved)
 
+    def splitter_moved(self):
+        print(self.splitter.sizes())
+    """
+    
         # シグナル
         self.splitter.splitterMoved.connect(
             lambda: self.splitter_moved(self.splitter))
@@ -1994,6 +2002,8 @@ class MyWidget(QDialog):
 
     def splitter_moved(self, splitter):
         print(splitter.sizes())
+
+
 
 
 if __name__ == '__main__':
