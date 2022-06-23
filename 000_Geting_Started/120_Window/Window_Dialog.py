@@ -6,7 +6,7 @@ from PySide2.QtWidgets import (
 )
 
 # QDialogクラスを継承してカスタムクラスを作成
-class MyWidget(QWidget):
+class MyWidget(QDialog):
     def __init__(self, parent=None):
         super().__init__(parent)
         

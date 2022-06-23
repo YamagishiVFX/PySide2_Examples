@@ -42,5 +42,4 @@ if __name__ == '__main__':
         layout.addWidget(item)
 
     widget.show()
-
-    sys.exit(app.exec_())
+    app.exec_()

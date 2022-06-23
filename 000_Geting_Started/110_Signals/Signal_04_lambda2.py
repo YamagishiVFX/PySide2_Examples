@@ -1,4 +1,3 @@
-import functools
 import sys
 
 from PySide2.QtWidgets import (
@@ -19,21 +18,21 @@ class MyWidget(QWidget):
         name = 'A'
         self.button_a = QPushButton(name, self)
         self.button_a.clicked.connect(
-                functools.partial(self.button_pressed, name)
+                lambda func=self.button_pressed, value=name: func(value)
             )
         self.main_layout.addWidget(self.button_a)
 
         name = 'B'
         self.button_b = QPushButton(name, self)
         self.button_b.clicked.connect(
-                functools.partial(self.button_pressed, name)
+                lambda func=self.button_pressed, value=name: func(value)
             )
         self.main_layout.addWidget(self.button_b)
 
         name = 'C'
         self.button_c = QPushButton(name, self)
         self.button_c.clicked.connect(
-                functools.partial(self.button_pressed, name)
+                lambda func=self.button_pressed, value=name: func(value)
             )
         self.main_layout.addWidget(self.button_c)
 

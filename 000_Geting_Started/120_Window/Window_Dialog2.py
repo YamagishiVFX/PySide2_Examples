@@ -5,7 +5,7 @@ from PySide2.QtWidgets import (
     QPushButton, QLineEdit, QWidget, QVBoxLayout
 )
 
-# QDialogクラスを継承してカスタムクラスを作成
+# QWidgetクラスを継承してカスタムクラスを作成
 class MyWidget(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
