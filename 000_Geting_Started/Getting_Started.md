@@ -44,6 +44,7 @@ Created: 2022/06/21 Tatsuya YAMAGISHI
 # 0. はじめに
 - PySide2はQt5(C++のライブラリ)をPythonで使えるようにしたライブラリ。
 - PySide2のプログラムは `クラス` を使うため、Pythonのクラスの基本的な知識があると良い。
+  - 参考：[VFXのためのPySideまとめ　PySideのためのクラス](https://yamagishi-2bit.blogspot.com/2021/09/pyside.html)
 - 駆け足で記事をまとめたため、おかしな点が多数ある場合がある。おいおい修正していく予定。
 - **記事の内容に一切の責任を持ちません。**
 
@@ -615,6 +616,7 @@ menubar = window.menuBar()
 
 # ファイルメニューの作成
 menu_file = QMenu('File')
+# メニューバーにファイルメニュー追加
 menubar.addAction(menu_file.menuAction())
 
 # # ファイルメニュー内にアクションを追加
@@ -773,7 +775,7 @@ view.show()
   - めちゃくちゃある 公式：[PySide2.QtWidgets](https://doc.qt.io/qtforpython-5/PySide2/QtWidgets/index.html)
 - QtDesignerで確認
   - 代表的なWidgetが左の `ウィジェットボックス` に配置さえてるので分かりやすい。
-    - クラス名は配置した後、右側のプロパティなどで確認。
+  - クラス名は配置した後、右側のプロパティなどで確認。
 
     ![](https://i.gyazo.com/db0d64af9c8085722dc674130f3b066d.png)
 
@@ -826,7 +828,7 @@ app.exec_()
 ```
 
 ### Widgetの設定をクラス内に移動
-- 処理する場所をクラス内に移しただけ。結果は同じ。どこが最適か？は実装によって異なってくると思う。
+- 処理する場所をクラス内に移動した。結果は同じ。どこが最適か？は実装によって異なってくると思う。
 - Widgetで使える関数は「[公式リファレンス:QWidget](https://doc.qt.io/qtforpython-5/PySide2/QtWidgets/QWidget.html)」などを参照
 - 派生したクラスでさらに関数が拡張され、使える関数は滅茶苦茶沢山ある。
 
@@ -1146,7 +1148,7 @@ app.exec_()
 
 
 ### setLayoutの省略
-`QLayout` の引数 `parent` にWidgetクラスを指定すれば、setLayout()の処理を省略出来たりも。
+`QLayout` の引数 `parent` に `MyWidgetクラス(self)` を指定すれば、setLayout()の処理を省略出来たりも。
 
 
 ![image](https://i.gyazo.com/47ae662277a07fdfe3fb2106259b571f.png)
@@ -1300,9 +1302,9 @@ app.exec_()
 
 こういう時は本家のQtのリファレンスを見る。
 
-参考: [Qt5 LineEdit](https://doc.qt.io/qt-6/qlineedit.html#textChanged)
+**参考:** [Qt5 LineEdit](https://doc.qt.io/qt-6/qlineedit.html#textChanged)
 
-![](https://i.gyazo.com/28cc8956a5ee3ca1505fcf14a61ff599.png)
+![](https://i.gyazo.com/cf0768026f345d6ec86f22a6dc094ed7.png)
 
 - **textChanged**
   - `文字` が変更した際に呼び出される。`setText()` などプログラム的に変更がされても実行される。
@@ -1383,6 +1385,11 @@ Result:
 <built-in function print>
 Test
 ```
+
+### Tips：PySide2ではスロット用のデコレータのワークフローがある。
+慣れてきたら。
+
+  - [参考：Qt for Python Signals and Slots](https://wiki.qt.io/Qt_for_Python_Signals_and_Slots)
 
 ### シグナルに引数が設定されている場合がある
 - Signalに必要な引数ではなく、スロット側で受け取る事が出来る引数。
@@ -1481,7 +1488,7 @@ class MyWidget(QWidget):
             * QPushButton.clicked
             * QPushButton.pressed
         という似たようなシグナルがある。
-        `クリック` と `右クリック` の違いのようだ
+        `クリック` と `左クリック` の違いのようだ
         """
         self.button = QPushButton('Push', self)
         self.button.clicked.connect(self.button_clicked)
