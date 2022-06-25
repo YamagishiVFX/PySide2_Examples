@@ -3,7 +3,6 @@
 
 
 Updated: 2022/06/25 Tatsuya YAMAGISHI
-- 一部修正
 
 Created: 2022/06/21 Tatsuya YAMAGISHI
 
@@ -28,7 +27,7 @@ Created: 2022/06/21 Tatsuya YAMAGISHI
 6. [GUIの作成:QtDesigner](#qtdesigner)
 7. [Windowの作成:](#window)
    1. [QDialog](#qdialog)
-   2. [QMainWIndow](#qmainwindow)
+   2. [QMainWindow](#qmainwindow)
    3. [QWidet](#qwidget)
    4. [Widgetの種類](#widgets)
 8. [Widgetのカスタマイズ基本:](#customize_basic)
@@ -69,7 +68,8 @@ Pythonのインストールに関しては色々解説があると思うので�
 - **Python2系の選択は論外**  サポート終了、PySide2がPython2.7で動かないなど
 
 ### VFXツールのPythonについて
-- Maya、Nuke、Houdini、3dsMaxは標準でPython、PySideが組み込まれているためインストールは不要。OSで実行したい際はOSにPythonのインストールをする必要がある。また、Python3が使えるクライアントバージョンを選択。Nukeだと13.0以降など。
+- Maya、Nuke、Houdini、3dsMaxは標準でPython、PySideが組み込まれているためインストールは不要。Python3が使えるクライアントバージョンを選択。Nukeだと13.0以降など。
+  - OSで実行したい際は別途OSにPython3、PySide2のインストールをする必要がある。
 
 
 ### Pythonには対応しているがPySideに対応していないツール
@@ -199,6 +199,8 @@ python test.py
 | Alt + PgUp/PgDn | カーソル位置を変えずにスクロール | 
 
 
+
+
 <a id="import"></a>
 
 # 4. Import PySide2
@@ -206,7 +208,7 @@ python test.py
 - いくつかimportの方式があり、それぞれメリットデミリットがあるように思える。僕個人は `最適` を提案出来るほど知識を有していない。
 - `PySide2.QtWidgets` に様々な種類のウィジェットが入っている。
 
-Example1:
+Example:
 ```Python
 from PySide2.QtCore import (
     QPoint, QRect, QSize, QTime, QUrl, Qt
@@ -279,7 +281,10 @@ app.exec_()
 ```
 
 ### 注2：QtでGUIが作成されているVFXツールの場合
-一般の環境ではあまりないかもしれないが、MayaなどのVFXツールはQtでアプリケーションが作られている事があり、Python、PySideがツールにガッツリ組み込まれており、ツール起動時に `QAplication` が作成されるらしく、`QAplication` を作ろうとするとエラーを返す。
+- `QAplication` は**１つだけ作成**
+
+
+一般の環境ではあまりないかもしれないが、MayaなどのVFXツールはQtでアプリケーションが作られており、Python、PySideがツールにガッツリ組み込まれている。ツール起動時に `QAplication` が作成されるらしく、`QAplication` を作ろうとするとエラーを返す。
 
 **先ほどのコードをMayaで実行した結果：**
 - Mayaが落ちる事もある。
@@ -492,7 +497,7 @@ window.show()
 app.exec_()
 ```
 
-### QMainWinodwにメニューやステータスバーを追加
+### QMainWindowにメニューやステータスバーを追加
 - [関連：QMainWindow](https://yamagishi-2bit.blogspot.com/2021/11/pyside2-qmainwindow-vfx.html)
 
 
@@ -500,7 +505,7 @@ QtDesignerでQMainWinodwを選択するとデフォルトでメニューやス�
 
 ![](https://i.gyazo.com/1da326108a048cd96121a7922a3bf43c.png)
 
-Example : 説明用にメニューやステータスバーを実装
+Example1 : 説明用にメニューやステータスバーを実装
 ```Python
 import sys
 
@@ -575,6 +580,78 @@ app.exec_()
 
 ----
 
+Example2: QMainWindow.menuBar()、QMainWindow.statsuBar()を用いた場合。
+
+- Example1と結果は同じ
+- `window.setMenuBar(menubar)`、`window.setStatusBar(statusbar)` などが省略可
+
+```Python
+import sys
+
+from PySide2.QtGui import (
+    QKeySequence
+)
+
+from PySide2.QtWidgets import (
+    QApplication, QAction, QMainWindow,
+    QMenu, QMenuBar, QStatusBar,
+)
+
+# Qアプリケーション作成
+app = QApplication(sys.argv)
+
+# ウィンドウオブジェクト作成
+window = QMainWindow()
+
+
+#--------------------------#
+# メニューバーの作成
+#--------------------------#
+# menubar = QMenuBar()
+# window.setMenuBar(menubar)
+
+# QMainWindow.menuBar()でメニューバー作成
+menubar = window.menuBar()
+
+# ファイルメニューの作成
+menu_file = QMenu('File')
+menubar.addAction(menu_file.menuAction())
+
+# # ファイルメニュー内にアクションを追加
+action = QAction('Exit')
+action.setShortcut(QKeySequence('Ctrl+Q'))
+action.triggered.connect(window.close)
+menu_file.addAction(action)
+
+
+#--------------------------#
+# ステータスバーの作成
+#--------------------------#
+# statusbar = QStatusBar(window)
+# window.setStatusBar(statusbar)
+
+# QMainWindow.statsuBar()でステータスバー作成
+statusbar = window.statusBar()
+
+
+statusbar.showMessage('Status Bar') 
+# statusbar.showMessage('Status Bar', 5000) # timeout: int=0 (ms)
+
+# ウィンドウタイトルを変更
+window.setWindowTitle('Main Window')
+
+# ウィンドウサイズの変更
+window.resize(300, 200)
+
+# ウィンドウの表示
+window.show()
+
+# アプリケーションメインループ開始
+app.exec_()
+```
+
+---
+
 
 <a id="qwidget"></a>
 
@@ -584,9 +661,9 @@ app.exec_()
   - parentを指定しないと `Window` として起動
   - parentを指定すると `パーツ(Widget)` として配置
 - **PySideでは `parent` を意識する事はとても大事**
-- Mayaなどで `QDialog` や `QMainWindow` 以外の Window用ではないWidget にMayaのメイン画面を parent すると Mayaのメイン画面に配置されてしまう場合がある。
+- Mayaなどで `QDialog` や `QMainWindow` 以外の `Window用ではないWidget` にMayaのメイン画面を parent すると Mayaのメイン画面に配置されてしまう場合がある。
 
-引用：PySide2 QWidget
+引用元：[PySide2 QWidget](https://doc.qt.io/qtforpython-5/PySide2/QtWidgets/QWidget.html)
 - `QMainWindow` や `QDialog` も `QWidget`　の派生クラスである事が分かる。
 
 ![](https://i.gyazo.com/5933fec47f762bf1ed072e628cf320b9.png)
@@ -859,10 +936,6 @@ app.exec_()
 - 例えば `QDialog` や `QMainWindow` をベースにした場合は `ウィンドウ用` が確定する。
 
 ### QWidgetを拡張してボタンを配置してみる。
-ボタンオブジェクトを作成してみたが何も表示されない。
-
-![image](https://i.gyazo.com/2799dfec90067f4eaaaa9246ede405bd.png)
-
 ```Python
 import sys
 
@@ -875,6 +948,7 @@ class MyWidget(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
 
+        # ボタンを作成作成
         self.button = QPushButton('Push')
         
         self.setWindowTitle('MyWidget')
@@ -884,8 +958,12 @@ class MyWidget(QWidget):
 app = QApplication(sys.argv)
 view = MyWidget()
 view.show()
-app.exec_()****
+app.exec_()
 ```
+ボタンオブジェクトを作成してみたが何も表示されない。
+
+![image](https://i.gyazo.com/2799dfec90067f4eaaaa9246ede405bd.png)
+
 
 ### widgetはparentを設定しないとWindow。parentを指定するとパーツ。
 - `QPushButton.show()` をするとButtonも別Windowとして表示される。
@@ -922,13 +1000,13 @@ QtDesignerなら、レイアウトを簡単に出来るが・・・
 <a id="qlayout"></a>
 
 # 10.QLayout
-数値でレイアウトするのは大変なので、PySideでのWidgetのレイアウトは基本的に `QLayout` を使う。
+数値でレイアウトするのは大変なので、レイアウトは基本的に `QLayout` を使う。
 
 QLayoutは
 
-- 水平レイアウト：QHBoxLayout
-- 垂直レイアウト：QVBoxLayout
-- グリッドレイアウト：QGridLayout
+- **水平レイアウト：** QHBoxLayout
+- **垂直レイアウト：** QVBoxLayout
+- **グリッドレイアウト：** QGridLayout
 
 などがある。
 
@@ -1306,12 +1384,13 @@ Result:
 Test
 ```
 
-### シグナルが引数を持つ場合がある
-この場合、スロット側で何かしらの引数を受け取れる。詳しくはリファレンス参照。
+### シグナルに引数が設定されている場合がある
+- Signalに必要な引数ではなく、スロット側で受け取る事が出来る引数。
+- 詳しくはリファレンス参照。
 
 ![image](https://i.gyazo.com/6a041ff728f88c2329f4de85b42c89f3.png)
 
-面倒なので、とりあえず関数を作って中身を見てみた。入力した文字列を受け取れるようだ。
+面倒なので、とりあえずスロット用関数を作って中身を見てみた。入力した文字列を受け取れるようだ。
 
 ![](https://i.gyazo.com/28124dc9aa533c60caaa71a06d998711.png)
 
@@ -1465,6 +1544,7 @@ class MyWidget(QWidget):
 
         # ラベルを作成
         self.line_edit = QLineEdit(self)
+        # シグナルに無記名関数を渡す
         self.line_edit.textEdited.connect(lambda: print('Test'))
         # レイアウトにボタンを追加
         self.main_layout.addWidget(self.line_edit)
@@ -1595,6 +1675,8 @@ app.exec_()
 ### Tips : functools.partial を使う方法もあるらしい
 参考 : [Lambda or partial as slot](https://forum.qt.io/topic/121647/lambda-or-partial-as-slot)
 
+- 推奨される方法かどうか？は不明
+
 ```Python
 import functools
 import sys
@@ -1647,7 +1729,6 @@ app.exec_()
 ```
 
 ### forループなどでボタンを作ってみたり
-- 推奨されるほうほうかどうか？は不明
 - Lambda式でも問題なし
 
 ![image](https://i.gyazo.com/db285f2fe9ff3e0ffe507a4a7557b294.png)
