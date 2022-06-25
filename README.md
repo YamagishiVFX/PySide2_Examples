@@ -8,15 +8,15 @@ Blog:[VFXのためのPySideまとめ](https://yamagishi-2bit.blogspot.com/2021/0
 * Python 3.7.9
 * PySide2 (Qt 5.15.2)
 
-## Relase Note:
+## Release Note:
+2022/06/25
+- UPdated: Quick Started
+
 2022/06/23
 - Added : Quick Started
 
 2022/06/11
 - Updated : QTreeWidget
-
-2022/06/10
-- Added: QTreeWidget
 
 ## Installation:
 **PySide2:** https://pypi.org/project/PySide2/
