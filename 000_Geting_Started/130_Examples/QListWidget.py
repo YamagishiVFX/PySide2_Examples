@@ -1,11 +1,8 @@
 import sys
 
 from PySide2.QtWidgets import (
-    QApplication, 
-    QDialog,
-    QListWidget,
-    QPushButton,
-    QVBoxLayout,
+    QApplication, QDialog, QListWidget,
+    QPushButton, QVBoxLayout,
 )
 
 ITEMS = ['CharaA', 'CharaB', 'CharaC', 'CharaD',]
@@ -14,11 +11,14 @@ class MyWidget(QDialog):
     def __init__(self, parent=None):
         super().__init__(parent)
         
+        # メインレイアウト
         self.main_layout = QVBoxLayout(self)
         self.main_layout.setContentsMargins(0, 0, 0, 0)
 
+
         # ボタン作成
         self.button = QPushButton('Clear')
+
 
         # ListWidget作成
         self.list = QListWidget()
@@ -26,13 +26,16 @@ class MyWidget(QDialog):
         self.list.addItems(ITEMS)
         # ソート機能
         self.list.setSortingEnabled(True)
-        # 各行で色変更
+        # 隔行で色変更
         self.list.setAlternatingRowColors(True)
+        # 複数選択モード
+        self.list.setSelectionMode(QListWidget.ExtendedSelection)
 
 
         # シグナル設定
         self.list.itemClicked.connect(self.list_activated)
         self.button.clicked.connect(self.button_clicked)
+
 
         # レイアウト
         self.main_layout.addWidget(self.button)

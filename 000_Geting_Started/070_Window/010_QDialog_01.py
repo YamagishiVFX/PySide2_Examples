@@ -17,6 +17,9 @@ dialog.setWindowTitle('My Dialog')
 # ウィンドウサイズの変更
 dialog.resize(300, 200)
 
+# ウィンドウの表示位置
+dialog.move(100, 200)
+
 # ウィジェットの表示
 dialog.show()
 

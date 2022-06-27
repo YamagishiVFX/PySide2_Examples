@@ -16,4 +16,4 @@ if __name__ == '__main__':
     view = MyWidget(core)
     view.show()
 
-    sys.exit(app.exec_())
+    app.exec_()
