@@ -18,4 +18,4 @@ if __name__ == '__main__':
     view = tool(core)
     view.show()
 
-    sys.exit(app.exec_())
+    app.exec_()

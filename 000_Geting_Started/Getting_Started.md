@@ -398,6 +398,9 @@ dialog.setWindowTitle('My Dialog')
 # ウィンドウサイズの変更
 dialog.resize(300, 200)
 
+# ウィンドウの表示位置
+dialog.move(100, 200)
+
 # ダイアログの表示
 dialog.show()
 
@@ -855,6 +858,9 @@ class MyWidget(QWidget):
         # ウィンドウサイズの変更
         self.resize(300, 200)
 
+        # ウィンドウの表示位置
+        self.move(100, 200)
+
         # ウィジェット表示も内包可能
         self.show()
 
@@ -884,6 +890,9 @@ class MyWidget(QDialog):
         
         # ウィンドウタイトルの設定
         self.setWindowTitle('MyWidget')
+
+        # ウィンドウの表示位置
+        self.move(100, 200)
         
         # ウィンドウサイズの変更
         self.resize(300, 200)
