@@ -2,7 +2,8 @@
 `Pythonなどプログラムがちょっと分かる人` が新たにPySide2を始めようとした際に参考になりそうな感じでまとめてみた。
 
 
-Updated: 2022/06/25 Tatsuya YAMAGISHI
+Updated: 2022/06/27 Tatsuya YAMAGISHI
+- 一部修正加筆
 
 Created: 2022/06/21 Tatsuya YAMAGISHI
 
@@ -23,18 +24,18 @@ Created: 2022/06/21 Tatsuya YAMAGISHI
 2. [PySide2インストール:](#install_pyside2)
 3. [開発環境:](#develop)
 4. [Import PySide2:](#import)
-5. [Qアプリケーションの作成:](#qaplication)
+5. [Qアプリケーションの作成:](#qapplication)
 6. [GUIの作成:QtDesigner](#qtdesigner)
 7. [Windowの作成:](#window)
    1. [QDialog](#qdialog)
    2. [QMainWindow](#qmainwindow)
    3. [QWidet](#qwidget)
    4. [Widgetの種類](#widgets)
-8. [Widgetのカスタマイズ基本:](#customize_basic)
+8. [PySideのクラスカスタマイズ基本:](#customize_basic)
 9. [Widgetのカスタマイズ:](#customize)
 10. [QLayout:](#qlayout)
 11. [シグナルの設定:](#signal)
-12. [DialogやMainWindowに作成したWidgetを配置:](#gui)
+12. [作成したWidgetをDialogやMainWindowに配置:](#gui)
 13. [Examples:](#examples)
 
 
@@ -248,7 +249,7 @@ Result：表示はCoreとなっているQtのバージョンのようだ。
 
 
 
-<a id="qaplication"></a>
+<a id="qapplication"></a>
 
 # 5. Qアプリケーション作成
 
@@ -273,7 +274,7 @@ window.show()
 app.exec_()
 ```
 
-### 注1：QAplicationは一番最初に必ず作らないとならない
+### 注1：QApplicationは一番最初に必ず作らないとならない
 ![image](https://i.gyazo.com/9d87fbcd0015771c9c0061dcbb0cb981.png)
 
 **Widgetオブジェクトが作れない。**
@@ -282,10 +283,9 @@ app.exec_()
 ```
 
 ### 注2：QtでGUIが作成されているVFXツールの場合
-- `QAplication` は**１つだけ作成**
+`QApplication` は**１つだけ作成**
 
-
-一般の環境ではあまりないかもしれないが、MayaなどのVFXツールはQtでアプリケーションが作られており、Python、PySideがツールにガッツリ組み込まれている。ツール起動時に `QAplication` が作成されるらしく、`QAplication` を作ろうとするとエラーを返す。
+一般の環境ではあまりないかもしれないが、MayaなどのVFXツールはQtでアプリケーションが作られており、Python、PySideがツールにガッツリ組み込まれている。ツール起動時に `QApplication` が作成されるらしく、`QApplication` を作ろうとするとエラーを返す。
 
 **先ほどのコードをMayaで実行した結果：**
 - Mayaが落ちる事もある。
@@ -323,17 +323,19 @@ window = QWidget()
 window.show()
 ```
 
-### Tips：OSとVFXツールでコードを同じにしたい場合
-`QApplication.instance()` で `QAplication` を取得し条件分岐させるなど
+### Tips：OSとVFXツールで同じプログラムを使い回したい場合
+`QApplication.instance()` で `QApplication` を取得し条件分岐させるなど
 ```Python
 app = QApplication.instance()
 
 if app is None:
+    # OS用
     app = QApplication(sys.argv)
     window = QWidget()
     window.show()
     app.exec_()
 else:
+    # VFXツール用
     widget = QWidget()
     widget.show()
 ```    
@@ -466,7 +468,7 @@ QDialogから派生する様々な種類のダイアログがあるようだ。
 
 <a id="qmainwindow"></a>
 
-### 7.2QMainWindow
+### 7.2 QMainWindow
 先ほどの `QDialog` と表示は全く同じだが、`QMainWindow` は `メニューバー` や `ステータスバー` を使えるようだ。
 
 ![](https://i.gyazo.com/0aae8bd03f9657f2734c4e8fb4d067e2.png)
@@ -502,7 +504,7 @@ app.exec_()
 - [関連：QMainWindow](https://yamagishi-2bit.blogspot.com/2021/11/pyside2-qmainwindow-vfx.html)
 
 
-QtDesignerでQMainWinodwを選択するとデフォルトでメニューやステータスバーが追加されているが、コードでフルスクラッチする場合は少し定義が多くなる。
+`QtDesigner` で `QMainWinodw` を選択するとデフォルトでメニューやステータスバーが追加されているが、コードでフルスクラッチする場合は少し定義が多くなる。
 
 ![](https://i.gyazo.com/1da326108a048cd96121a7922a3bf43c.png)
 
@@ -733,7 +735,7 @@ view.show()
 app.exec_()
 ```
 
-**Example3 : 般的なWidgetにMayaのメイン画面をparentしてみた場合**
+**Example3 : 一般的なWidgetにMayaのメイン画面をparentした場合**
 
 Mayaのメイン画面にボタンが配置され合体する。
 
@@ -783,7 +785,7 @@ view.show()
 
 <a id="customize_basic"></a>
 
-# 8. Widgetのカスタマイズ基本
+# 8. PySideのクラスカスタマイズ基本
 
 ### 基本形
 - 特定の `Widgetのクラス` を継承し拡張するやり方が基本
@@ -1386,10 +1388,6 @@ Result:
 Test
 ```
 
-### Tips：PySide2ではスロット用のデコレータのワークフローがある。
-慣れてきたら。
-
-  - [参考：Qt for Python Signals and Slots](https://wiki.qt.io/Qt_for_Python_Signals_and_Slots)
 
 ### シグナルに引数が設定されている場合がある
 - Signalに必要な引数ではなく、スロット側で受け取る事が出来る引数。
@@ -1485,10 +1483,10 @@ class MyWidget(QWidget):
         # ボタンを作成
         """
         QPushButtonもLineEditと同じように
-            * QPushButton.clicked
-            * QPushButton.pressed
+            * QPushButton.clicked: ショートカットキーの入力などを含むクリック
+            * QPushButton.pressed: ボタンが押されたとき。
         という似たようなシグナルがある。
-        `クリック` と `左クリック` の違いのようだ
+
         """
         self.button = QPushButton('Push', self)
         self.button.clicked.connect(self.button_clicked)
@@ -1570,7 +1568,7 @@ view.show()
 app.exec_()
 ```
 
-### Tips:Lambdaで引数を変えて関数をラップ - 失敗例
+### Lambdaで引数を変えて関数をラップ - 失敗例
 - 変数 `name` が最後の評価になってしまい、全部の出力が　`C`。
 - Python3で `lambda` の仕様の変更があった影響か？以前動いていたコードが上手く動作しなくなっている。
 
@@ -1624,7 +1622,7 @@ view.show()
 app.exec_()
 ```
 
-### Tips : 望んだ動作をするLambda式の書き方
+### 望んだ動作をするLambda式の書き方
 ```Python
 lambda func=self.button_pressed, value=name: func(value)
 ```
@@ -1758,7 +1756,12 @@ class MyWidget(QWidget):
         self.setLayout(self.main_layout)
 
 
-        # ボタンを作成
+        """ ボタンを作成
+        Qtではローカル変数などでWidgetがどこにも保持されない場合、Widgetは表示されない。
+        * main_layout内にbuttonオブジェクトが配置される。
+        * この場合は、self.button = QPushButton() など変数に格納しなくても問題ない。
+        """
+
         button_name_list = ['A', 'B', 'C',]
 
         for button_name in sorted(button_name_list):
@@ -1766,6 +1769,7 @@ class MyWidget(QWidget):
             button.clicked.connect(
                 functools.partial(self.button_pressed, button_name)
             )
+
             self.main_layout.addWidget(button)
 
 
@@ -1779,17 +1783,26 @@ view.show()
 app.exec_()
 ```
 
+
+### Tips：PySide2ではスロット用のデコレータのワークフローがある。
+慣れてきたら。
+
+  - [参考：Qt for Python Signals and Slots](https://wiki.qt.io/Qt_for_Python_Signals_and_Slots)
+
+
+
 <a id="gui"></a>
 
-# 作成したWidgetをDialogやMainWindowに配置
+# 11. 作成したWidgetをDialogやMainWindowに配置
 - **用途を限定したくない** 場合はGUIのデザインは `QWidget` を基本にしておくと便利。
 - `QDialog` や `QMainWindow` は用途が明確。
   - **QDialog :** 常にWindow。ダイアログとしての機能を拡張できる。
   - **QMainWindow :** 常にWindow。メニューバーやステータスバーを使える。
 
+----
 
-### 基底クラスを変更する
-- 先ほどのコードの基底クラスを `QDialog` や `QMainWinodw`に書き換えても全く同じWindowを表示出来る。
+### 11.1 基底クラスを変更する
+- 先ほどのコードの基底クラスを `QDialog` や `QMainWinodw` に書き換えても全く同じWindowを表示出来る。
 
 ![image](https://gyazo.com/c9db1b240a5a0d8a97f0daf1651bd06b.png)
 
@@ -1800,7 +1813,9 @@ Example: 基底クラスを`QDialog`に変更した場合
 ![image](https://i.gyazo.com/4e71cd71766ea709f5d9cdbafab05873.png)
 
 
-### ダイアログに配置して表示
+----
+
+### 11.2 ダイアログに配置して表示
 ![iamge](https://i.gyazo.com/38ef3aeaa7aa4d43eb683db33e64ea5c.png)
 
 - MyWidget部分は先ほどのコードを使うので、ここではQDialog部分のコードのみ掲載。
@@ -1852,7 +1867,7 @@ app.exec_()
 ```
 
 
-### MyWidegtをパーツとして好きな所にどんどん追加出来る。
+#### MyWidegtをパーツとして好きな所にどんどん追加出来る。
 ![image](https://gyazo.com/6430e478906db44da0080ab01afa5e3a.png)
 
 ```Python
@@ -1892,8 +1907,8 @@ dialog = MyDialog()
 result = dialog.exec_()
 ```
 
-### ダイアログの使い方など
-- 今回のコードではQDialogである意味は全くないが、「ダイアログとして使いたい」「ウィンドウで入力した情報を取得したい」等の場合に意味が出てくる。
+#### ダイアログの使い方など
+- 今回のコードではQDialogである意味は全くないが、「ダイアログとして使いたい」「入力した情報を取得したい」等の場合に意味が出てくる。
 - 「OK」などのボタンを実装したり。
 
 参考：
@@ -1903,7 +1918,7 @@ result = dialog.exec_()
 
 ----
 
-### メインウィンドウとして表示
+### 11.3 メインウィンドウとして表示
 QMainWindowのメインとなるエリアは `CentralWidget` と呼ばれる。何かエヴァっぽくてかっこいいすね。
 
 ![image](https://i.gyazo.com/df9290b8388021fefe257c502ea5ca38.png)
@@ -1953,9 +1968,9 @@ app.exec_()
 `QWidget.setDisabled(<Bool>)`
 
 ```Python
-self.text_edit = QTextEdit(self)
-self.text_edit.setPlainText('Test')
-self.text_edit.setDisabled(True)
+text_edit = QTextEdit(self)
+text_edit.setPlainText('Test')
+text_edit.setDisabled(True)
 ```
 
 ![image](https://i.gyazo.com/2191dea64f2f0fd59912bebfd1be32b2.png)
@@ -1963,7 +1978,7 @@ self.text_edit.setDisabled(True)
 
 ### 非表示
 ```Python
-self.line_edit.setHidden(True)
+line_edit.setHidden(True)
 ```
 
 ![image](https://gyazo.com/08451df39ced122de611a34bdf4f0b70.png)
@@ -1984,26 +1999,25 @@ font.setBold(True)
 font.setItalic(True)
 
 
-self.label = QLabel('Test')
-self.label.setFont(font)
+label = QLabel('Test')
+label.setFont(font)
 ```
 
 ### フォント一覧：QFontComboBox
 ![image](https://i.gyazo.com/0b4521b8a8c1bff56a1efb9be9211fe6.png)
 
 ```Python
-self.font_combobox =  QFontComboBox(self)
-self.main_layout.addWidget(self.font_combobox)
+font_combobox =  QFontComboBox(self)
 
 # QFont取得
-font = self.font_combobox.currentFont()
+font = font_combobox.currentFont()
 ```
 
 ### 文字の色の変更
 ![image](https://i.gyazo.com/94c7962f0e37be2746e083c97229c78d.png)
 
 - `StyleSheet` というものがあり、その指定で色などデザインを定義する。CoreのQtに依存するためか？文字列で定義する事が多く、地味に面倒・・・。
-- Widgetの種類などによって色の設定の手法がいくつか存在しており、地味に大変・・・。
+- Widgetの種類などによって色の設定の手法がいくつか存在しており、調べるのが地味に大変・・・。
   - setBackGroundだったり、setStyleだったり、setStyleSheetだったり・・・。
 
 
@@ -2022,9 +2036,21 @@ style_sheet = 'QLabel { color : rgb(255, 0, 0)}'
 style_sheet = 'QLabel { color : red;}'
 
 # QLabel作成
-self.label = QLabel('Test')
-self.label.setStyleSheet(style_sheet)
+label = QLabel('Test')
+label.setStyleSheet(style_sheet)
 ```
+
+### 背景色
+![image](https://i.gyazo.com/58819857afafa92c16f0688719d8ad9c.png)
+
+```Python
+line_edit = QLineEdit('Test')
+style = 'background-color: rgb(200, 50, 50);'
+line_edit.setStyleSheet(style)
+```
+
+
+関連：[ウィジェットの背景色を変えてみる](https://yamagishi-2bit.blogspot.com/2021/09/pyside2-stylesheet.html)
 
 ### Widgetの背景を透明に
 
@@ -2150,7 +2176,8 @@ class MyWidget(QDialog):
 
         # シグナル
         self.splitter.splitterMoved.connect(
-            lambda: self.splitter_moved(self.splitter))
+            lambda: self.splitter_moved(self.splitter)
+        )
 
 
     def splitter_moved(self, splitter):
@@ -2175,6 +2202,45 @@ if __name__ == '__main__':
     app.exec_()
 ```
 
+### 手っ取り早くダークスタイルに
+- PyPi: [QDarkStyle](https://pypi.org/project/QDarkStyle/)
+  - Python3.10、PySide6には未対応のようだ（2022/06/25）
+
+![image](https://i.gyazo.com/e2956a9c1377612caa2ea5a24510d942.png)
+
+```Python
+import sys
+
+from PySide2.QtWidgets import (
+    QApplication, QTextEdit, QVBoxLayout, QWidget
+)
+
+import qdarkstyle
+
+class MyWidget(QWidget):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+
+        self.main_layout = QVBoxLayout(self)
+
+        self.text_edit = QTextEdit(self)
+        self.text_edit.setPlainText('Test')
+        self.main_layout.addWidget(self.text_edit)
+
+        self.setWindowTitle('MyWidget')
+        self.resize(300, 120)
+
+app = QApplication(sys.argv)
+
+# Set DarkStyel StyelSheet
+dark_stylesheet = qdarkstyle.load_stylesheet_pyside2()
+app.setStyleSheet(dark_stylesheet)
+
+view = MyWidget()
+view.show()
+
+app.exec_()
+```
 
 ## Tips
 - Python2用のPySide2の公式ビルドは存在しないと思うのでPython2にPySide2はインストール出来ないと思う。
