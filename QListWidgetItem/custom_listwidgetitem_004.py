@@ -33,35 +33,42 @@ class MyWidget(QtWidgets.QWidget):
         self.main_layout = QtWidgets.QVBoxLayout(self)
 
         self.label_1 = QtWidgets.QLabel('Label_1')
-        self.main_layout.addWidget(self.label_1)
+        self.label_1.setStyleSheet('color: rgb(0, 0, 255);')
 
         self.label_2 = QtWidgets.QLabel('Label_2')
-        self.main_layout.addWidget(self.label_2)
+        self.label_2.setStyleSheet('color: rgb(255, 0, 0);')
 
         self.button = QtWidgets.QPushButton('Test')
         self.button.clicked.connect(self.button_clicked)
+
+
+        self.main_layout.addWidget(self.label_1)
+        self.main_layout.addWidget(self.label_2)
         self.main_layout.addWidget(self.button)
 
         
-
     def set_item(self, item):
         self.item = item
 
-        self.label_1.setText(item[0])
-        self.label_1.setStyleSheet('color: rgb(0, 0, 255);')
-
+        self.label_1.setText(item[0])      
         self.label_2.setText(item[1])
-        self.label_2.setStyleSheet('color: rgb(255, 0, 0);')
+        
 
     def button_clicked(self):
-        print(f'Name: {self.item[1]}')
+        print(f'Name: {self.get_name()}')
 
+
+    def get_name(self):
+        return self.item[1]
 
 class Window(QtWidgets.QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.list = QtWidgets.QListWidget(self)
+        self.list.itemClicked.connect(self.list_activated)
+
         layout = QtWidgets.QVBoxLayout(self)
+        
         layout.addWidget(self.list)
 
 
@@ -76,7 +83,12 @@ class Window(QtWidgets.QWidget):
             list_widget_item.setSizeHint(my_widget.sizeHint())
             # ListWidgetItemにウィジェット設定
             self.list.setItemWidget(list_widget_item, my_widget)
-            
+
+
+    def list_activated(self, item):
+        if item:
+            widget = self.list.itemWidget(item)
+            print(f'QWidget Slot : {widget.get_name()}')
 
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)

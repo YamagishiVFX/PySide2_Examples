@@ -1,22 +1,34 @@
-# PySide2 Examples
+# PySide2 Examples <!-- omit in toc -->
 PySide2 in VFX.
 
 Blog:[VFXのためのPySideまとめ](https://yamagishi-2bit.blogspot.com/2021/09/pyside.html) (Japanese only.)
 
-## Environment:
+## Contents: <!-- omit in toc -->
+
+- [System Environment:](#system-environment)
+- [Release Note:](#release-note)
+- [Installation:](#installation)
+- [Darkstyle:](#darkstyle)
+- [Import PySide2:](#import-pyside2)
+  - [Example1:](#example1)
+  - [Example2:](#example2)
+  - [Example3:](#example3)
+- [Qt.py](#qtpy)
+  - [Example:](#example)
+
+## System Environment:
 * Window10
 * Python 3.7.9
 * PySide2 (Qt 5.15.2)
 
 ## Release Note:
+2022/08/01
+- Added:
+  - QSpacer
+
 2022/06/25
-- UPdated: Quick Started
+- Updated: Quick Started
 
-2022/06/23
-- Added : Quick Started
-
-2022/06/11
-- Updated : QTreeWidget
 
 ## Installation:
 **PySide2:** https://pypi.org/project/PySide2/
@@ -52,6 +64,7 @@ if __name__ == '__main__':
     view.show()
     app.exec_()
 ```
+
 ### Example2:
 ```Python
 from PySide2.QtCore import (
@@ -65,6 +78,7 @@ from PySide2.QtWidgets import (
     QWidget
 )
 ```
+
 ### Example3:
 ```Python
 from PySide2.QtCore import *
@@ -75,14 +89,10 @@ from PySide2.QtWidgets import *
 ## Qt.py
 https://github.com/mottosso/Qt.py
 
-### Import Example:
+### Example:
 ```Python
 try:
     from PySide2 import QtCore, QtGui, QtWidgets
 except:
     from Qt import QtCore, QtGui, QtWidgets
 ```
-
-## Examples 
-* QDialog
-* QMainWindow
