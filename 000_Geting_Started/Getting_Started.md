@@ -2,7 +2,7 @@
 `Pythonなどプログラムがちょっと分かる人` が新たにPySide2を始めようとした際に参考になりそうな感じでまとめてみた。
 
 
-Updated: 2022/06/27 Tatsuya YAMAGISHI
+Updated: 2022/07/13 Tatsuya YAMAGISHI
 - 一部修正加筆
 
 Created: 2022/06/21 Tatsuya YAMAGISHI
@@ -44,9 +44,9 @@ Created: 2022/06/21 Tatsuya YAMAGISHI
 
 # 0. はじめに
 - PySide2はQt5(C++のライブラリ)をPythonで使えるようにしたライブラリ。
-- PySide2のプログラムは `クラス` を使うため、Pythonのクラスの基本的な知識があると良い。
+- PySide2のプログラムは `クラス` を使うため、クラスの基本的な知識があると良い。
   - 参考：[VFXのためのPySideまとめ　PySideのためのクラス](https://yamagishi-2bit.blogspot.com/2021/09/pyside.html)
-- 駆け足で記事をまとめたため、おかしな点が多数ある場合がある。おいおい修正していく予定。
+- 駆け足で記事をまとめたため、おかしな所はおいおい修正していく予定。
 - **記事の内容に一切の責任を持ちません。**
 
 
@@ -71,7 +71,7 @@ Pythonのインストールに関しては色々解説があると思うので�
 
 ### VFXツールのPythonについて
 - Maya、Nuke、Houdini、3dsMaxは標準でPython、PySideが組み込まれているためインストールは不要。Python3が使えるクライアントバージョンを選択。Nukeだと13.0以降など。
-  - OSで実行したい際は別途OSにPython3、PySide2のインストールをする必要がある。
+  - OSで実行したい際は別途OSにPython3、PySide2をインストールする必要がある。
 
 
 ### Pythonには対応しているがPySideに対応していないツール
@@ -96,7 +96,7 @@ Pythonのインストールに関しては色々解説があると思うので�
 - Houdini
 - 3dsMax
 
-などは標準でPySide2が統合されているため `インストールの必要はない。` ここのコードを動かすためにはPython3対応のバージョンを選択。OSで動作させるためには、別途OSにインストールが必要。
+などは標準でPySide2が統合されているため `インストールの必要はない。` 
 
 ### PySide2のインストール
 
@@ -833,7 +833,7 @@ app.exec_()
 ```
 
 ### Widgetの設定をクラス内に移動
-- 処理する場所をクラス内に移動した。結果は同じ。どこが最適か？は実装によって異なってくると思う。
+- 処理する場所をクラス内に移動した。結果は同じ。運用方法によってどこで設定するのが適切か？は変わってくると思う。
 - Widgetで使える関数は「[公式リファレンス:QWidget](https://doc.qt.io/qtforpython-5/PySide2/QtWidgets/QWidget.html)」などを参照
 - 派生したクラスでさらに関数が拡張され、使える関数は滅茶苦茶沢山ある。
 
@@ -978,9 +978,9 @@ app.exec_()
 ![image](https://i.gyazo.com/2799dfec90067f4eaaaa9246ede405bd.png)
 
 
-### widgetはparentを設定しないとWindow。parentを指定するとパーツ。
+### Widgetはparentを設定しないとWindow。parentを指定するとパーツ。
 - `QPushButton.show()` をするとButtonも別Windowとして表示される。
-- `QPushButton` などの 多くのWidgetは `QWidget` の派生クラスなので、基本的に **`QWidget`の特徴を継承** しているようだ。
+- `QPushButton` などの 多くのWidgetは `QWidgetの派生クラス` なので、基本的に **`QWidget`の特徴を継承** しているようだ。
 
 ![image](https://i.gyazo.com/2d74dacf2e7ca185eeb54bbaa903e27c.png)
 
@@ -993,7 +993,8 @@ app.exec_()
 
 ![image](https://i.gyazo.com/89fc50a452127d7c963d206cd7179110.png)
 
-デフォルト引数が設定されているので明示的に書くことも。
+`デフォルト引数` なので明示的に書くことも。
+
 ```Python
 QPushButton('Push', parent=self)
 ```
