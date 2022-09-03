@@ -2,7 +2,7 @@
 `Pythonなどプログラムがちょっと分かる人` が新たにPySide2を始めようとした際に参考になりそうな感じでまとめてみた。
 
 
-Updated: 2022/07/13 Tatsuya YAMAGISHI
+Updated: 2022/08/02 Tatsuya YAMAGISHI
 - 一部修正加筆
 
 Created: 2022/06/21 Tatsuya YAMAGISHI
@@ -43,10 +43,10 @@ Created: 2022/06/21 Tatsuya YAMAGISHI
 <a id="intro"></a>
 
 # 0. はじめに
-- PySide2はQt5(C++のライブラリ)をPythonで使えるようにしたライブラリ。
+- PySide2はQt5(C++のライブラリ)をPythonで使えるようにしたGUI作成用ライブラリ。
 - PySide2のプログラムは `クラス` を使うため、クラスの基本的な知識があると良い。
   - 参考：[VFXのためのPySideまとめ　PySideのためのクラス](https://yamagishi-2bit.blogspot.com/2021/09/pyside.html)
-- 駆け足で記事をまとめたため、おかしな所はおいおい修正していく予定。
+- 駆け足で記事を書いたため、おかしな所はつど修正していく予定。
 - **記事の内容に一切の責任を持ちません。**
 
 
@@ -54,7 +54,7 @@ Created: 2022/06/21 Tatsuya YAMAGISHI
 <a id="install_python"></a>
 
 # 1. Python3のインストール
-Pythonのインストールに関しては色々解説があると思うのでここでは割愛。
+Pythonのインストールに関してはネットに沢山の情報があると思うのでここでは割愛。
 
 ### 参考：
 - [Pythonのバージョンを確認、表示（sys.versionなど）](https://note.nkmk.me/python-sys-platform-version-info/)
@@ -62,15 +62,15 @@ Pythonのインストールに関しては色々解説があると思うので�
 ### VFX用途のPythonのバージョンについて
 2022/06/21現在
 
-- **3.9系：** お勧め。VFX搭載のPythonは3.7系が多い印象なので注意が必要。
-- **3.7系：** 主要ツールが3.7系なので **互換を意識したい場合はおすすめ** 。 
+- **3.9系：** お勧め。
+- **3.7系：** VFX主要ツールが3.7系なので **互換を意識したい場合はおすすめ** 。 
   - 3.7以降追加された関数を使わなければ 3.9で問題ないと思われる。
-- **3.10系** CY2023 Draftに Python3.10 の文字があるため、将来性を意識したい場合。
+- **3.10系** CY2023 Draftに Python3.10 の文字があるため、将来性を意識したい場合。数値の計算の仕様など、コードに影響を与えそうな修正がある。
   - [VFX Reference Platform](https://vfxplatform.com/)
-- **Python2系の選択は論外**  サポート終了、PySide2がPython2.7で動かないなど
+- **Python2系の選択は論外**  2020年でサポートが終了している。
 
 ### VFXツールのPythonについて
-- Maya、Nuke、Houdini、3dsMaxは標準でPython、PySideが組み込まれているためインストールは不要。Python3が使えるクライアントバージョンを選択。Nukeだと13.0以降など。
+- Maya、Nuke、Houdini、3dsMaxは標準でPython、PySideが組み込まれているため**インストールは不要**。Python3が使えるクライアントバージョンを選択。Nukeだと13.0以降など。
   - OSで実行したい際は別途OSにPython3、PySide2をインストールする必要がある。
 
 
@@ -144,12 +144,12 @@ pip list -o
 # 3. 開発環境
 ### VSCodeのインストール
 - コードエディタとして `VSCode` をインストール
-- MayaなどのVFXツールで開発を行う場合は `簡易コードエディタ` が搭載されているため必ず準備する必要はない。
-  - VSCodeなどの高機能エディタは `スペルミス` や `補完機能` など便利な機能が沢山あるため `VSCode` などの高機能エディタの使用を推奨。これに慣れてしまうと普通のドキュメント作成もVSCodeが手放せなくなってくる・・・。
-
-    ![image](https://i.gyazo.com/a70de37f8f1609d7a447dfdbcb494af1.png)
+- MayaなどのVFXツールは `簡易コードエディタ` が搭載されているためインストールは必須ではないが・・・。
+  - VSCodeなどの高機能エディタは `スペルミス` や `補完機能` など便利な機能が沢山あるため `VSCode` などの高機能エディタの使用を推奨。これに慣れてしまうと普通のドキュメント作成もVSCodeが手放せない。
+  - `VSCode` 以外のエディタでは `PyCharm` の名前をよく耳にする。
   
-- `VSCode` 以外のエディタでは `PyCharm` の名前をよく耳にする。
+   ![image](https://i.gyazo.com/a70de37f8f1609d7a447dfdbcb494af1.png)
+  
 
 
 ### Python拡張をインストール
@@ -199,6 +199,7 @@ python test.py
 | Shift + Delete | 1行丸ごと削除 | 
 | Ctrl + D | 選択している単語と同じ文字を選択。押すたびに追加選択 | 
 | Alt + PgUp/PgDn | カーソル位置を変えずにスクロール | 
+| Ctrl + k → v | Markdown `.md` 形式のプレビュー | 
 
 
 
@@ -238,11 +239,10 @@ print(PySide2.__version__)
 
 # Prints the Qt version used to compile PySide2
 print(PySide2.QtCore.__version__)
-```
-Result：表示はCoreとなっているQtのバージョンのようだ。
-```
-5.15.0
-5.15.0
+
+>>> Result：# 表示はCoreとなっているQtのバージョンのようだ。
+>>> 5.15.0
+>>> 5.15.0
 ```
 
 <a id="qtdesigner"></a>
@@ -336,8 +336,8 @@ if app is None:
     app.exec_()
 else:
     # VFXツール用
-    widget = QWidget()
-    widget.show()
+    window = QWidget()
+    window.show()
 ```    
 
 
@@ -507,7 +507,7 @@ app.exec_()
 - [関連：QMainWindow](https://yamagishi-2bit.blogspot.com/2021/11/pyside2-qmainwindow-vfx.html)
 
 
-`QtDesigner` で `QMainWinodw` を選択するとデフォルトでメニューやステータスバーが追加されているが、コードでフルスクラッチする場合は少し定義が多くなる。
+`QtDesigner` で `QMainWindow` を選択するとデフォルトでメニューやステータスバーが追加されているが、コードでフルスクラッチする場合は少し定義が多くなる。
 
 ![](https://i.gyazo.com/1da326108a048cd96121a7922a3bf43c.png)
 
@@ -2069,6 +2069,17 @@ line_edit.setStyleSheet(style)
 ```Python
 self.status = QtWidgets.QLabel('Status : -')
 self.status.setAttribute(QtCore.Qt.WA_TranslucentBackground)
+```
+
+### QPushButtonの文字の位置合わせ
+`setStyleSheet` を使うらしい。
+
+![](https://i.gyazo.com/e552d98b36d55bd39cdf1701aa154fbf.png)
+
+```Python
+self.button = QtWidgets.QPushButton(self.path.name)
+self.button.setFixedSize(200, 25)
+self.button.setStyleSheet("QPushButton { text-align: left; }")
 ```
 
 ### QListWidget

@@ -13,6 +13,7 @@ class View(QtWidgets.QWidget):
         self.main_layout = QtWidgets.QVBoxLayout(self)
         
         self.checkbox = QtWidgets.QCheckBox('CheckBox')
+        self.checkbox.setCheckState(QtCore.Qt.Checked)
         self.main_layout.addWidget(self.checkbox)
 
         self.button = QtWidgets.QPushButton('Push')
