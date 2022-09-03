@@ -50,8 +50,9 @@ class View(QtWidgets.QWidget):
     def item_pressed_event(self, item):
         print(item.text())
 
+
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
     view = View()
     view.show()
-    sys.exit(app.exec_())
+    app.exec_()
