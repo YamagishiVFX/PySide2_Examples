@@ -32,6 +32,10 @@ def paste_image():
     cb = QClipboard()
     return cb.pixmap()
 
+
+#=====================================#
+# Main
+#=====================================#
 if __name__ == '__main__':
     app = QApplication(sys.argv) # Qt対応のVFXツールでは省略可
     
