@@ -22,12 +22,13 @@ Blog:[VFXのためのPySideまとめ](https://yamagishi-2bit.blogspot.com/2021/0
 * PySide2 (Qt 5.15.2)
 
 ## Release Note:
+2022/09/13
+- Added:
+  - QComboBox
+
 2022/08/01
 - Added:
   - QSpacer
-
-2022/06/25
-- Updated: Quick Started
 
 
 ## Installation:

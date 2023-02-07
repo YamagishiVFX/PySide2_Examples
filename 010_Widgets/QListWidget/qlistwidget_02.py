@@ -3,7 +3,7 @@
 ファイルをドラッグ＆ドロップして表示
 
 Info:
-    * Updated: 2022/09/03
+    * Updated: 2022/09/05
     * Created: 2022/08/29
     * Coding: Python 3.7.9 & PySide2(Qt5)
     * Coding by: Tatsuya YAMAGISHI
@@ -52,7 +52,11 @@ class FileListWidget(QtWidgets.QListWidget):
         action.triggered.connect(self.activate_items)
         menu.addAction(action)
 
-        action = QtWidgets.QAction('Delete', self)
+        action = QtWidgets.QAction('Deleate All', self)
+        action.triggered.connect(self.clear)
+        menu.addAction(action)
+
+        action = QtWidgets.QAction('Delete Selection', self)
         action.triggered.connect(self.delete_items)
         menu.addAction(action)
 
@@ -91,9 +95,10 @@ class FileListWidget(QtWidgets.QListWidget):
     #================================================#
     # Set / Get
     #================================================#
-    def set_items(self, files: list):
-        self.clear()
+    def get_current_files(self):
+        return [item.get() for item in self.selectedItems()]
 
+    def set_items(self, files: list):
         for file in files:
             item = FileListWidgetItem(file, self)
 
@@ -110,10 +115,9 @@ class FileListWidget(QtWidgets.QListWidget):
 
 
     def activate_items(self):
-        items = self.selectedItems()
+        cur_files = self.get_current_files()
 
-        for item in items:
-            print(item.get())
+        print(cur_files)
 
 
 if __name__ == '__main__':
