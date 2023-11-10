@@ -15,7 +15,6 @@ import sys
 
 from PySide2 import QtCore, QtGui, QtWidgets
 
-
 class FileListWidgetItem(QtWidgets.QListWidgetItem):
     def __init__(self, file, parent=None) -> None:
         super().__init__(parent)   
@@ -26,6 +25,10 @@ class FileListWidgetItem(QtWidgets.QListWidgetItem):
 
     def get(self):
         return self.file
+    
+    def test(self):
+        parent = self.parent()
+        print(parent)
 
 
 class FileListWidget(QtWidgets.QListWidget):

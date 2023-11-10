@@ -8,6 +8,7 @@ Blog:[VFXのためのPySideまとめ](https://yamagishi-2bit.blogspot.com/2021/0
 - [System Environment:](#system-environment)
 - [Release Note:](#release-note)
 - [Installation:](#installation)
+- [Getting Started](./000_Geting_Started/Getting_Started.md)
 - [Darkstyle:](#darkstyle)
 - [Import PySide2:](#import-pyside2)
   - [Example1:](#example1)
