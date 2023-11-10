@@ -1,7 +1,10 @@
 """
 PySide2 QMainWindow simple example:
 
-Updated : v1.0.1 2022/06/13
+Updated : 
+    *v1.0.2 2023/02/26
+        *setStatusBar
+    *v1.0.1 2022/06/13
 
 Created : 2022/06/13
 """
@@ -33,9 +36,10 @@ class MyWindow(QtWidgets.QMainWindow):
         #--------------------------------------#
         # Setup Status Bar
         #--------------------------------------#
-        self.statusbar = QtWidgets.QStatusBar(self)
-        self.setStatusBar(self.statusbar)
+        # self.statusbar = QtWidgets.QStatusBar(self)
+        # self.setStatusBar(self.statusbar)
 
+        self.setStatusBar(self.statusBar())
         #--------------------------------------#
         # menuBar
         #--------------------------------------#

@@ -44,4 +44,4 @@ if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
     result = MyDialog.getDate()
     print(result)
-    sys.exit(app.exec_())
+    app.exec_()
