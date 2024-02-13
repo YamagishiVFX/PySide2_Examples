@@ -8,7 +8,6 @@ Blog:[VFXのためのPySideまとめ](https://yamagishi-2bit.blogspot.com/2021/0
 - [System Environment:](#system-environment)
 - [Release Note:](#release-note)
 - [Installation:](#installation)
-- [Getting Started](./000_Geting_Started/Getting_Started.md)
 - [Darkstyle:](#darkstyle)
 - [Import PySide2:](#import-pyside2)
   - [Example1:](#example1)
@@ -23,6 +22,9 @@ Blog:[VFXのためのPySideまとめ](https://yamagishi-2bit.blogspot.com/2021/0
 * PySide2 (Qt 5.15.2)
 
 ## Release Note:
+2024/02/13
+Test
+
 2022/09/13
 - Added:
   - QComboBox
