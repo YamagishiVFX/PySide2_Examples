@@ -28,6 +28,7 @@ class WidgetItem(QtWidgets.QPushButton):
             self.move(self.mapToParent(event.pos() - self._offset))
             # print(self.pos())
 
+
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
 
